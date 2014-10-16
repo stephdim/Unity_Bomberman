@@ -3,31 +3,24 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 
-public class Fire : MonoBehaviour
-{
+public class Fire : MonoBehaviour {
+
 	private int timer = 2 * 60;
-	// Use this for initialization
-	void Start ()
-	{
-	}
 
-	// Update is called once per frame
-	void Update ()
-	{
+	void Update() {
 		if (this.timer == 0) {
-
 			this.FireSpread();
 			timer = 2 * 60;
 		}
 		this.timer--;
 	}
 
-	public void DestroyBomb(GameObject bomb){
+	public void DestroyBomb(GameObject bomb) {
 		Terrain terrain = Terrain.instance;
 		if (bomb != null) {
-			Vector3 pos = terrain.GetVector3Position (bomb.transform.position);
-			terrain.terrain.Remove (terrain.GetRealPosition (pos));
-			Destroy (bomb.gameObject);
+			Vector3 pos = terrain.GetVector3Position(bomb.transform.position);
+			terrain.terrain.Remove(terrain.GetRealPosition (pos));
+			Destroy(bomb.gameObject);
 		}
 	}
 
