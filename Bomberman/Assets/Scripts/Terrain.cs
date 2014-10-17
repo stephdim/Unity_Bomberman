@@ -38,15 +38,22 @@ public class Terrain : MonoBehaviour {
 	private const int width = 11;
 	public GameObject bomb;
 	public GameObject destroyable_block;
-
+	private int timer = 2 * 60;
 	public Dictionary<Vector2,GameObject> terrain;
-
+	public Player[] players = new Player[4];
+	public List<Fire> fires = new List<Fire>();
 	public Dictionary<GameObject,Player> dico_bomb = new Dictionary<GameObject, Player>();
-	public List<Vector2> indestructible_block = new List<Vector2>();
+	private List<GameObject> bombs = new List<GameObject>();
+
 
 	void Start() {
 		this.terrain = new Dictionary<Vector2,GameObject>();
+		players = GameObject.FindObjectsOfType<Player>();
 		this.AddBlocks ();
+	}
+
+
+	void Update(){
 	}
 
 	public Vector2 GetRealPosition(Vector3 v) {
@@ -71,6 +78,11 @@ public class Terrain : MonoBehaviour {
 		return isStartCasesForPlayers || isIndestructibleBlocCases;
 	}
 
+	public bool IsIndestructibleBlocCases(Vector2 v){
+		Vector2 vabs = new Vector2 (Mathf.Abs (v.x), Mathf.Abs (v.y));
+		return (vabs.x % 2 == 1 && vabs.y % 2 == 0);
+	}
+
 	public bool IsOccupied(Vector2 v) {
 		return this.terrain.ContainsKey(v);
 	}
@@ -83,9 +95,8 @@ public class Terrain : MonoBehaviour {
 		Vector3 v1 = this.GetVector3Position(player.transform.position);
 		GameObject bomb_clone = (GameObject) Instantiate(this.bomb, v1, Quaternion.identity);
 		bomb_clone.SetActive(true);
-		if (bomb_clone != null) { // @question: when bomb_clone can be null ?
-			this.dico_bomb.Add(bomb_clone, player);
-		}
+		this.dico_bomb.Add(bomb_clone, player);
+		this.bombs.Add (bomb_clone);
 		return bomb_clone;
 	}
 
@@ -98,7 +109,7 @@ public class Terrain : MonoBehaviour {
 		return false;
 	}
 
-	void AddBlocks() {
+	private void AddBlocks() {
 		int nb_block = 200;
 		for (int i = 0; i < nb_block; i++) {
 			int x = Random.Range(-6,7);
@@ -112,5 +123,19 @@ public class Terrain : MonoBehaviour {
 			}
 		}
 	}
+
+	public GameObject GetGameObject(Vector2 v){
+		return this.terrain [v];
+	}
+
+	public bool RemoveGameObject(Vector2 v){
+		if (this.IsOccupied(v)) {
+			this.terrain.Remove(v);
+			return true;
+		}
+		return false;
+	}
+
+	//TODO : Create a function which check if a GameObject is on the same case than a Fire.
 }
 

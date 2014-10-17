@@ -5,8 +5,21 @@ using System.Threading;
 
 public class Fire : MonoBehaviour {
 
-	private int timer = 2 * 60;
+	private int timer;
+	private Vector2 direction;
+	private Vector2 position;
+	private int power;
 
+	//TODO Modify because we can't create an instance of Fire (it's impossible to do new Fire()).
+	public Fire(Vector2 direction, Vector2 position, int power){
+		this.direction = direction;
+		this.position = position;
+		this.power = power;
+	}
+
+	void Start(){
+		this.timer = 2 * 60;
+	}
 	void Update() {
 		if (this.timer == 0) {
 			this.FireSpread();
@@ -14,7 +27,9 @@ public class Fire : MonoBehaviour {
 		}
 		this.timer--;
 	}
-
+	
+	//TODO Move those 2 functions in Terrain.cs because it's this script who fixes the conflict between all Object
+	//TODO create a function DeplaceFire
 	public void DestroyBomb(GameObject bomb) {
 		Terrain terrain = Terrain.instance;
 		if (bomb != null) {
@@ -24,94 +39,58 @@ public class Fire : MonoBehaviour {
 		}
 	}
 
+	//TODO Modify because all bombs are destroy at the same time.
 	public void FireSpread(){
 		Terrain terrain = Terrain.instance;
 		Player[] players = GameObject.FindObjectsOfType<Player> ();
 		foreach (GameObject bomb in terrain.dico_bomb.Keys) {
 			Player p = terrain.dico_bomb [bomb];
 			Vector3 pos = bomb.transform.position;
-
-			Vector2 pos_up = terrain.GetRealPosition (new Vector3 (pos.x + 1, pos.y, pos.z));
-			Vector2 pos_down = terrain.GetRealPosition (new Vector3 (pos.x - 1, pos.y, pos.z));
-			Vector2 pos_left = terrain.GetRealPosition (new Vector3 (pos.x, pos.y, pos.z - 1));
-			Vector2 pos_right = terrain.GetRealPosition (new Vector3 (pos.x, pos.y, pos.z + 1));
 			this.DestroyBomb(bomb.gameObject);
-			bool can_spread = true;
 			foreach (Player player in players) {
 				if (terrain.GetRealPosition (player.transform.position) == terrain.GetRealPosition (pos)) {
 					Destroy (player.gameObject);
 				}
 			}
-			while (pos_up.x <= pos.x + p.power && can_spread) {
-				if (terrain.terrain.ContainsKey (pos_up)) {
-					Destroy (terrain.terrain [pos_up].gameObject);
-					terrain.terrain.Remove (pos_up);
-					can_spread = false;
-				}
-				if (terrain.indestructible_block.Contains (pos_up)) {
-					can_spread = false;
-				}
-				foreach (Player player in players) {
-					if (terrain.GetRealPosition (player.transform.position) == pos_up) {
-						Destroy (player.gameObject);
-					}
-				}
-				pos_up.x += 1;
-			}
-			can_spread = true;
-			while (pos_down.x >=-(pos.x + p.power) && can_spread) {
-				if (terrain.terrain.ContainsKey (pos_down)) {
-					Destroy (terrain.terrain [pos_down].gameObject);
-					terrain.terrain.Remove (pos_down);
-					can_spread = false;
-				}
-				if (terrain.indestructible_block.Contains (pos_down)) {
-					can_spread = false;
-				}
-				foreach (Player player in players) {
-					if (terrain.GetRealPosition (player.transform.position) == pos_down) {
-						Destroy (player.gameObject);
-					}
-				}
-				pos_down.x -= 1;
-			}
-			can_spread = true;
-			while (pos_left.y >=-(pos.z + p.power) && can_spread) {
-				if (terrain.terrain.ContainsKey (pos_left)) {
-					Destroy (terrain.terrain [pos_left].gameObject);
-					terrain.terrain.Remove (pos_left);
-					can_spread = false;
-				}
-				if (terrain.indestructible_block.Contains (pos_left)) {
-					can_spread = false;
-				}
-				foreach (Player player in players) {
-					if (terrain.GetRealPosition (player.transform.position) == pos_left) {
-						Destroy (player.gameObject);
-					}
-				}
-				pos_left.y -= 1;
-			}
-			can_spread = true;
-			while (pos_right.y <= (pos.z + p.power) && can_spread) {
-				if (terrain.terrain.ContainsKey (pos_right)) {
-					Destroy (terrain.terrain [pos_right].gameObject);
-					terrain.terrain.Remove (pos_right);
-					can_spread = false;
-				}
-				if (terrain.indestructible_block.Contains (pos_right)) {
-					can_spread = false;
-				}
-				foreach (Player player in players) {
-					if (terrain.GetRealPosition (player.transform.position) == pos_right) {
-						Destroy (player.gameObject);
-					}
-				}
-				pos_right.y += 1;
-			}
-			can_spread = true;
+			Vector2 up = new Vector2(1f,0f);
+			Vector2 down = new Vector2(-1f,0f);
+			Vector2 right = new Vector2(0f,1f);
+			Vector2 left = new Vector2(0f,-1f);
+			this.DirectionalFire(up,terrain.GetRealPosition(pos),p);
+			this.DirectionalFire(down,terrain.GetRealPosition(pos),p);
+			this.DirectionalFire(left,terrain.GetRealPosition(pos),p);
+			this.DirectionalFire(right,terrain.GetRealPosition(pos),p);
 		}
 		terrain.dico_bomb.Clear ();
 	}
-}
 
+
+	void DirectionalFire(Vector2 dir, Vector2 pos, Player player){
+		Terrain terrain = Terrain.instance;
+		Vector2 fire_pos = new Vector2 (pos.x, pos.y);
+		bool is_alive = true;
+		int iter = player.GetPower ();
+		while (iter >= 0 && is_alive) {
+			if(terrain.IsOccupied(fire_pos) && !terrain.IsIndestructibleBlocCases(fire_pos)){
+				Destroy(terrain.GetGameObject(fire_pos).gameObject);
+				terrain.RemoveGameObject(fire_pos);
+				is_alive = false;
+			}
+			if(terrain.IsIndestructibleBlocCases(fire_pos)){
+				is_alive = false;
+			}
+			for(int i = 0; i< terrain.players.Length; i++){
+				Player p = terrain.players[i];
+				if(p != null){
+					if(terrain.GetRealPosition(p.transform.position) == fire_pos){
+						terrain.players[i] = null;
+						Destroy(p.gameObject);
+						is_alive = false;
+					}
+				}
+			}
+			fire_pos += dir;
+			iter--;
+		}
+	}
+}

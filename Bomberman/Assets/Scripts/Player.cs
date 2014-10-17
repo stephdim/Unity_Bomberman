@@ -5,7 +5,7 @@ public class Player : MonoBehaviour {
 
 	protected int color;
 	protected int speed;
-	public int power;
+	protected int power;
 
 	void Start() {
 		this.speed = 1;
@@ -18,9 +18,12 @@ public class Player : MonoBehaviour {
 		}
 	}
 
-	public void AddBomb() {
+	private void AddBomb() {
 		Terrain.instance.AddBomb(this);
 	}
-	
+
+	public int GetPower(){
+		return this.power;
+	}
 }
 
