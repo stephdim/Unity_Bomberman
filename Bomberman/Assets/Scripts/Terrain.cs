@@ -7,7 +7,6 @@ using System.Collections.Generic;
  * 
  * @todo: add description of Terrain class here...
  * 
- * @comment: maybe use "relative" position for terrain and "absolute" for unity scene
  */
 public class Terrain : MonoBehaviour {
 
@@ -36,39 +35,90 @@ public class Terrain : MonoBehaviour {
 
 	private const int length = 13;
 	private const int width = 11;
+
 	public GameObject bomb;
 	public GameObject destroyable_block;
 
-	public Dictionary<Vector2,GameObject> terrain;
-
-	public Dictionary<GameObject,Player> dico_bomb = new Dictionary<GameObject, Player>();
-	public List<Vector2> indestructible_block = new List<Vector2>();
+	private Dictionary<Vector2,GameObject> terrain;
+	private List<Fire> fires;
 
 	void Start() {
 		this.terrain = new Dictionary<Vector2,GameObject>();
-		this.AddBlocks ();
+		this.fires = new List<Fire>();
+		this.AddBlocks();
 	}
 
-	public Vector2 GetRealPosition(Vector3 v) {
-		float x = Mathf.Ceil(v.x - 0.5f);
-		float z = Mathf.Ceil(v.z - 0.5f);
-		return new Vector2(x,z);
+	private void FireUpdate() {
+		List<Fire> firesToRemove = new List<Fire>();
+		List<Bomb> bombsToExplode = new List<Bomb>();
+
+		foreach (Fire fire in this.fires) {
+
+			if (this.terrain.ContainsKey(fire.position)) {
+				GameObject gameObject = this.terrain[fire.position];
+				this.terrain.Remove(fire.position);
+
+				// check if bomb
+				Bomb bomb = gameObject.GetComponent<Bomb>();
+				if (bomb != null) {
+					bombsToExplode.Add(bomb);
+				}
+
+				Destroy(gameObject);
+				firesToRemove.Add(fire);
+				continue;
+			} else if (this.IsIndestructibleBlocCases(fire.position)) {
+				firesToRemove.Add(fire);
+				continue;
+			}
+
+			if (fire.isDead()) {
+				firesToRemove.Add(fire);
+			} else {
+				fire.Move();
+			}
+		}
+
+		foreach (Fire fire in firesToRemove) {
+			this.fires.Remove(fire);
+		}
+
+		foreach (Bomb bomb in bombsToExplode) {
+			this.ExplodeBomb(bomb);
+		}
 	}
 
-	public Vector3 GetVector3Position(Vector3 v) {
+	void Update() {
+		FireUpdate();
+	}
+
+	public Vector3 GetAbsolutePosition(Vector3 v) {
 		float x = Mathf.Ceil(v.x - 0.5f);
 		float z = Mathf.Ceil(v.z - 0.5f);
 		return new Vector3(x, v.y, z);
 	}
 
+	public Vector2 GetRelativePosition(Vector3 v) {
+		Vector3 tmp = this.GetAbsolutePosition(v);
+		return new Vector2(tmp.x,tmp.z);
+	}
+
+	private Vector2 Vector2Abs(Vector2 v) {
+		return new Vector2(Mathf.Abs(v.x), Mathf.Abs(v.y));
+	}
+
+	private bool IsIndestructibleBlocCases(Vector2 v) {
+		Vector2 vabs = Vector2Abs(v);
+		return vabs.x % 2 == 1 && vabs.y % 2 == 0;
+	}
+
 	private bool IsForbidden(Vector2 v) {
-		Vector2 vabs = new Vector2(Mathf.Abs(v.x), Mathf.Abs(v.y));
+		Vector2 vabs = Vector2Abs(v);
 		bool isStartCasesForPlayers = (
 			(vabs.x == 5 && vabs.y == 5) ||
 			(vabs.x == 6 && (vabs.y == 4 || vabs.y == 5))
 		);
-		bool isIndestructibleBlocCases = (vabs.x % 2 == 1 && vabs.y % 2 == 0);
-		return isStartCasesForPlayers || isIndestructibleBlocCases;
+		return isStartCasesForPlayers || this.IsIndestructibleBlocCases(v);
 	}
 
 	public bool IsOccupied(Vector2 v) {
@@ -76,37 +126,59 @@ public class Terrain : MonoBehaviour {
 	}
 
 	public bool IsOccupied(Vector3 v) {
-		return this.IsOccupied(this.GetRealPosition(v));
+		return this.IsOccupied(this.GetRelativePosition(v));
 	}
 
 	private GameObject MakeBomb(Player player) {
-		Vector3 v1 = this.GetVector3Position(player.transform.position);
-		GameObject bomb_clone = (GameObject) Instantiate(this.bomb, v1, Quaternion.identity);
+		GameObject bomb_clone = (GameObject) Instantiate(
+			this.bomb,
+			this.GetAbsolutePosition(player.transform.position),
+			Quaternion.identity
+		);
+
+		bomb_clone.GetComponent<Bomb>().player = player;
 		bomb_clone.SetActive(true);
-		if (bomb_clone != null) { // @question: when bomb_clone can be null ?
-			this.dico_bomb.Add(bomb_clone, player);
-		}
+
 		return bomb_clone;
 	}
 
 	public bool AddBomb(Player player) {
 		Vector3 player_pos = player.transform.position;
 		if (!this.IsOccupied(player_pos)) {
-			this.terrain.Add(this.GetRealPosition(player_pos), this.MakeBomb(player));
+			this.terrain.Add(this.GetRelativePosition(player_pos), this.MakeBomb(player));
 			return true;
 		}
 		return false;
 	}
 
-	void AddBlocks() {
+	public void ExplodeBomb(Bomb bomb) {
+		Vector2 pos = this.GetRelativePosition(bomb.transform.position);
+
+		// Remove bomb from terrain & destroy GameObject
+		this.terrain.Remove(pos);
+		bomb.Explode();
+		Destroy(bomb.gameObject);
+
+		// Launch Fires !
+		this.fires.Add(new Fire(pos, new Vector2(-1,0), bomb.player.power));
+		this.fires.Add(new Fire(pos, new Vector2(1,0), bomb.player.power));
+		this.fires.Add(new Fire(pos, new Vector2(0,1), bomb.player.power));
+		this.fires.Add(new Fire(pos, new Vector2(0,-1), bomb.player.power));
+	}
+
+	private void AddBlocks() {
 		int nb_block = 200;
 		for (int i = 0; i < nb_block; i++) {
 			int x = Random.Range(-6,7);
 			int z = Random.Range(-5,6);
 			Vector3 v = new Vector3(x, 0.5f, z);
-			Vector2 v2 = GetRealPosition(v);
+			Vector2 v2 = GetRelativePosition(v);
 			if (!this.IsOccupied(v2) && !this.IsForbidden(v2)) {
-				GameObject block = (GameObject) Instantiate(this.destroyable_block, v, Quaternion.identity);
+				GameObject block = (GameObject) Instantiate(
+					this.destroyable_block,
+					v,
+					Quaternion.identity
+				);
 				block.SetActive(true);
 				this.terrain.Add(v2, block);
 			}
