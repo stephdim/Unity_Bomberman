@@ -39,11 +39,10 @@ public class Fire : MonoBehaviour {
 		}
 	}
 
-	//TODO Modify because all bombs are destroy at the same time.
 	public void FireSpread(){
 		Terrain terrain = Terrain.instance;
 		Player[] players = GameObject.FindObjectsOfType<Player> ();
-		foreach (GameObject bomb in terrain.dico_bomb.Keys) {
+		GameObject bomb = this.gameObject;
 			Player p = terrain.dico_bomb [bomb];
 			Vector3 pos = bomb.transform.position;
 			this.DestroyBomb(bomb.gameObject);
@@ -60,8 +59,6 @@ public class Fire : MonoBehaviour {
 			this.DirectionalFire(down,terrain.GetRealPosition(pos),p);
 			this.DirectionalFire(left,terrain.GetRealPosition(pos),p);
 			this.DirectionalFire(right,terrain.GetRealPosition(pos),p);
-		}
-		terrain.dico_bomb.Clear ();
 	}
 
 
