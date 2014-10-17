@@ -42,7 +42,7 @@ public class Terrain : MonoBehaviour {
 	public Dictionary<Vector2,GameObject> terrain;
 	public Player[] players = new Player[4];
 	public List<Fire> fires = new List<Fire>();
-	public Dictionary<GameObject,Player> dico_bomb = new Dictionary<GameObject, Player>();
+	public Dictionary<Player,List<GameObject>> dico_bomb = new Dictionary<Player,List<GameObject>>();
 	private List<GameObject> bombs = new List<GameObject>();
 
 
@@ -95,7 +95,10 @@ public class Terrain : MonoBehaviour {
 		Vector3 v1 = this.GetVector3Position(player.transform.position);
 		GameObject bomb_clone = (GameObject) Instantiate(this.bomb, v1, Quaternion.identity);
 		bomb_clone.SetActive(true);
-		this.dico_bomb.Add(bomb_clone, player);
+		if (!this.dico_bomb.ContainsKey (player)) {
+			this.dico_bomb.Add (player, new List<GameObject> ());
+		}
+		this.dico_bomb [player].Add (bomb_clone);
 		this.bombs.Add (bomb_clone);
 		return bomb_clone;
 	}
@@ -103,8 +106,10 @@ public class Terrain : MonoBehaviour {
 	public bool AddBomb(Player player) {
 		Vector3 player_pos = player.transform.position;
 		if (!this.IsOccupied(player_pos)) {
-			this.terrain.Add(this.GetRealPosition(player_pos), this.MakeBomb(player));
-			return true;
+			if(!this.dico_bomb.ContainsKey(player) || this.dico_bomb[player].Count < player.GetNbBomb()){
+				this.terrain.Add(this.GetRealPosition(player_pos), this.MakeBomb(player));
+				return true;
+			}
 		}
 		return false;
 	}
