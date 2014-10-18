@@ -5,6 +5,7 @@ public class Player : MonoBehaviour {
 
 	protected int color;
 	protected int speed;
+
 	protected int bombs_index_max;
 	protected int bombs_index_current;
 	public int power { get; private set; }
@@ -12,7 +13,7 @@ public class Player : MonoBehaviour {
 	void Start() {
 		this.speed = 1;
 		this.power = 0;
-		this.bombs_index_max = 1;
+		this.bombs_index_max = 2;
 		this.bombs_index_current = 0;
 	}
 
@@ -30,10 +31,9 @@ public class Player : MonoBehaviour {
 		}
 	}
 
-	void AddBomb() {
+	private void AddBomb() {
 		this.bombs_index_current++;
 		Terrain.instance.AddBomb(this);
 	}
-	
 }
 

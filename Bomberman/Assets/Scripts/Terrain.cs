@@ -150,7 +150,7 @@ public class Terrain : MonoBehaviour {
 		}
 		return false;
 	}
-
+	
 	public void ExplodeBomb(Bomb bomb) {
 		Vector2 pos = this.GetRelativePosition(bomb.transform.position);
 
@@ -165,7 +165,7 @@ public class Terrain : MonoBehaviour {
 		this.fires.Add(new Fire(pos, new Vector2(0,1), bomb.player.power));
 		this.fires.Add(new Fire(pos, new Vector2(0,-1), bomb.player.power));
 	}
-
+	
 	private void AddBlocks() {
 		int nb_block = 200;
 		for (int i = 0; i < nb_block; i++) {
@@ -184,5 +184,19 @@ public class Terrain : MonoBehaviour {
 			}
 		}
 	}
+
+	public GameObject GetGameObject(Vector2 v){
+		return this.terrain [v];
+	}
+
+	public bool RemoveGameObject(Vector2 v){
+		if (this.IsOccupied(v)) {
+			this.terrain.Remove(v);
+			return true;
+		}
+		return false;
+	}
+
+	//TODO : Create a function which check if a GameObject is on the same case than a Fire.
 }
 
