@@ -4,17 +4,20 @@ using System.Collections;
 public class Player : MonoBehaviour {
 
 	protected int color;
-	protected int speed;
+	public float speed { get; private set; }
 
 	protected int bombs_index_max;
 	protected int bombs_index_current;
 	public int power { get; private set; }
 
+	private Move move;
+
 	void Start() {
-		this.speed = 1;
+		this.speed = .2f;
 		this.power = 0;
 		this.bombs_index_max = 2;
 		this.bombs_index_current = 0;
+		move = new Move(this);
 	}
 
 	private bool CanAddBomb() {
@@ -29,6 +32,7 @@ public class Player : MonoBehaviour {
 		if (Input.GetKeyDown(KeyCode.Space) && this.CanAddBomb()) {
 			this.AddBomb();
 		}
+		this.move.Update();
 	}
 
 	private void AddBomb() {

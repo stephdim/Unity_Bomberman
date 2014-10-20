@@ -197,6 +197,41 @@ public class Terrain : MonoBehaviour {
 		return false;
 	}
 
+	private bool IsOutOfTerrain(Vector2 v) {
+		return v.x < -6 || v.x > 6 || v.y > 5 || v.y < -5;
+	}
+
+	private float GetDistMax(Player player) {
+		Vector3 v1 = this.GetAbsolutePosition(player.transform.position);
+		Vector3 v2 = player.transform.position;
+		return Mathf.Max(v1.x - v2.x, Mathf.Max(v1.y - v2.y, v1.z - v2.z));
+	}
+
+	private bool CanMoveToAbsolute(Player player) {
+		return this.GetDistMax(player) > 0;
+	}
+
+	public bool CanMove(Player player, Vector2 dir) {
+		Vector2 nextPosition = this.GetRelativePosition(player.transform.position) + dir;
+		return (
+			!this.IsOccupied(nextPosition) &&
+			!this.IsIndestructibleBlocCases(nextPosition) &&
+			!this.IsOutOfTerrain(nextPosition)
+		);
+	}
+
+	private Vector3 GetAbsoluteDirection(Vector2 dir) {
+		return new Vector3(dir.x, 0, dir.y);
+	}
+
+	public void MovePlayer(Player player, Vector2 dir) {
+		if (this.CanMove(player, dir)) {
+			player.transform.Translate(
+				Mathf.Min(player.speed, this.GetDistMax(player)) * this.GetAbsoluteDirection(dir)
+			);
+		}
+	}
+
 	//TODO : Create a function which check if a GameObject is on the same case than a Fire.
 }
 
