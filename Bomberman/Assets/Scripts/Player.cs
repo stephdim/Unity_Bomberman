@@ -39,5 +39,17 @@ public class Player : MonoBehaviour {
 		this.bombs_index_current++;
 		Terrain.instance.AddBomb(this);
 	}
+
+	public void AddBonus(Bonuses bonus){
+		int kind = bonus.GetKindOfBonus ();
+		if (kind == 1) {
+				this.bombs_index_max++;
+		} else if (kind == 2) {
+				this.speed++;
+		} else if (kind == 3) {
+			this.power++;
+		} else {
+		}
+	}
 }
 

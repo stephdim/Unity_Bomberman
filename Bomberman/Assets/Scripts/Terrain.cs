@@ -38,14 +38,18 @@ public class Terrain : MonoBehaviour {
 
 	public GameObject bomb;
 	public GameObject destroyable_block;
-
+	public GameObject bonus;
 	private Dictionary<Vector2,GameObject> terrain;
 	private List<Fire> fires;
 
+	private Player[] players;
 	void Start() {
 		this.terrain = new Dictionary<Vector2,GameObject>();
 		this.fires = new List<Fire>();
 		this.AddBlocks();
+		this.players = new Player[4];
+		this.players = GameObject.FindObjectsOfType<Player> ();
+		this.AddBonus();
 	}
 
 	private void FireUpdate() {
@@ -70,6 +74,16 @@ public class Terrain : MonoBehaviour {
 			} else if (this.IsIndestructibleBlocCases(fire.position)) {
 				firesToRemove.Add(fire);
 				continue;
+			} else{
+				for(int i = 0; i<this.players.Length; i++){
+					Player p = this.players[i];
+					if(p != null){
+						if(this.GetRelativePosition(p.transform.position) == fire.position){
+							this.players[i] = null;
+							Destroy (p.gameObject);
+						}
+					}
+				}
 			}
 
 			if (fire.isDead()) {
@@ -159,6 +173,15 @@ public class Terrain : MonoBehaviour {
 		bomb.Explode();
 		Destroy(bomb.gameObject);
 
+		for(int i = 0; i<this.players.Length; i++){
+			Player p = this.players[i];
+			if(p != null){
+				if(this.GetRelativePosition(p.transform.position) == pos){
+					this.players[i] = null;
+					Destroy (p.gameObject);
+				}
+			}
+		}
 		// Launch Fires !
 		this.fires.Add(new Fire(pos, new Vector2(-1,0), bomb.player.power));
 		this.fires.Add(new Fire(pos, new Vector2(1,0), bomb.player.power));
@@ -232,6 +255,25 @@ public class Terrain : MonoBehaviour {
 		}
 	}
 
-	//TODO : Create a function which check if a GameObject is on the same case than a Fire.
-}
+	// Bonuses
 
+	private void AddBonus(){
+		int nb_bonus = 40;
+		for (int i = 0; i < nb_bonus; i++) {
+			int x = Random.Range (-6, 7);
+			int z = Random.Range (-5, 6);
+			Vector3 v = new Vector3 (x, 0.5f, z);
+			Vector2 v2 = GetRelativePosition (v);
+			if (this.IsOccupied (v2)) {
+					GameObject bonus = (GameObject)Instantiate (
+						this.bonus,
+						v,
+						Quaternion.identity
+					);
+					bonus.SetActive (true);
+			} else {
+					i--;
+			}
+		}
+	}
+}
