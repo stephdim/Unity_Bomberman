@@ -53,9 +53,8 @@ public class Terrain : MonoBehaviour {
 		this.list_bonus = (List<string>)ReflectiveEnumerator.GetEnumerableOfType<Bonus> ();
 
 		this.AddBlocks();
-//		this.players = new Player[4];
 		this.players = GameObject.FindObjectsOfType<Player> ();
-		// this.AddBonus();
+		 this.AddBonus();
 	}
 
 	private void FireUpdate() {
@@ -189,12 +188,21 @@ public class Terrain : MonoBehaviour {
 			}
 		}
 		// Launch Fires !
-		this.fires.Add(new Fire(pos, new Vector2(-1,0), bomb.player.power));
-		this.fires.Add(new Fire(pos, new Vector2(1,0), bomb.player.power));
-		this.fires.Add(new Fire(pos, new Vector2(0,1), bomb.player.power));
-		this.fires.Add(new Fire(pos, new Vector2(0,-1), bomb.player.power));
+		LaunchFire(pos, new Vector2(0,0), 1);
+		LaunchFire(pos, new Vector2(-1,0), bomb.player.power);
+		LaunchFire(pos, new Vector2(1,0), bomb.player.power);
+		LaunchFire(pos, new Vector2(0,1), bomb.player.power);
+		LaunchFire(pos, new Vector2(0,-1), bomb.player.power);
 	}
-	
+
+
+	private void LaunchFire(Vector2 pos, Vector2 dir,int power){
+		Vector2 new_pos = pos + dir;
+		if (!this.IsIndestructibleBlocCases (new_pos) && !this.IsOutOfTerrain (new_pos)) {
+			this.fires.Add(new Fire(pos, dir, power));
+		}
+	}
+
 	private void AddBlocks() {
 		int nb_block = 200;
 		for (int i = 0; i < nb_block; i++) {
