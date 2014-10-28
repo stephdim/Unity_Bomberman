@@ -8,6 +8,9 @@ using System.Collections.Generic;
  * @todo: add description of Terrain class here...
  * 
  */
+using System.Linq;
+
+
 public class Terrain : MonoBehaviour {
 
 	private static Terrain _instance;
@@ -41,11 +44,14 @@ public class Terrain : MonoBehaviour {
 	public GameObject bonus;
 	private Dictionary<Vector2,GameObject> terrain;
 	private List<Fire> fires;
-
+	private List<string> list_bonus;
 	private Player[] players;
+
 	void Start() {
 		this.terrain = new Dictionary<Vector2,GameObject>();
 		this.fires = new List<Fire>();
+		this.list_bonus = (List<string>)ReflectiveEnumerator.GetEnumerableOfType<Bonus> ();
+
 		this.AddBlocks();
 		this.players = new Player[4];
 		this.players = GameObject.FindObjectsOfType<Player> ();
@@ -270,9 +276,12 @@ public class Terrain : MonoBehaviour {
 						v,
 						Quaternion.identity
 					);
-					bonus.SetActive (true);
+				int kind = Random.Range(0,this.list_bonus.Count);
+				string t = this.list_bonus.ElementAt(kind);
+				bonus.AddComponent(t);
+				bonus.SetActive (true);
 			} else {
-					i--;
+				i--;
 			}
 		}
 	}
