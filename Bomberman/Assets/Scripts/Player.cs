@@ -4,12 +4,18 @@ using System.Runtime.CompilerServices;
 
 public class Player : MonoBehaviour {
 
-	protected int color;
+	public string input_horizontal;
+	public string input_vertical;
+	public string input_fire;
+
 	public float speed { get; private set; }
+	public int power { get; private set; }
+
+	protected int color;
 
 	protected int bombs_index_max;
 	protected int bombs_index_current;
-	public int power { get; private set; }
+	
 	private bool push_bomb;
 
 	void Start() {
@@ -30,7 +36,20 @@ public class Player : MonoBehaviour {
 	}
 
 	void Update() {
-		if (Input.GetKeyDown(KeyCode.Space) && this.CanAddBomb()) {
+
+		float h = Input.GetAxis(input_horizontal);
+		float v = Input.GetAxis(input_vertical);
+
+		// Movement
+		if (h != 0 || v != 0) {
+			Terrain.instance.MovePlayer(this, new Vector2(
+				Mathf.Abs(h) > 0 ? 1 * Mathf.Sign(h) : 0,
+				Mathf.Abs(v) > 0 ? 1 * Mathf.Sign(v) : 0
+			));
+		}
+
+		// Put bomb
+		if (Input.GetButton(input_fire) && this.CanAddBomb()) {
 			this.AddBomb();
 		}
 	}
@@ -42,7 +61,6 @@ public class Player : MonoBehaviour {
 	}
 
 	// Add Bonus
-
 	public void IncreaseBomb(){
 		this.bombs_index_max++;
 	}

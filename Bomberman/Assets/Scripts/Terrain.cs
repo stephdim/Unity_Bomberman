@@ -53,9 +53,9 @@ public class Terrain : MonoBehaviour {
 		this.list_bonus = (List<string>)ReflectiveEnumerator.GetEnumerableOfType<Bonus> ();
 
 		this.AddBlocks();
-		this.players = new Player[4];
+//		this.players = new Player[4];
 		this.players = GameObject.FindObjectsOfType<Player> ();
-		this.AddBonus();
+		// this.AddBonus();
 	}
 
 	private void FireUpdate() {
@@ -230,35 +230,37 @@ public class Terrain : MonoBehaviour {
 		return v.x < -6 || v.x > 6 || v.y > 5 || v.y < -5;
 	}
 
-	private float GetDistMax(Player player) {
-		Vector3 v1 = this.GetAbsolutePosition(player.transform.position);
-		Vector3 v2 = player.transform.position;
-		return Mathf.Max(v1.x - v2.x, Mathf.Max(v1.y - v2.y, v1.z - v2.z));
-	}
-
-	private bool CanMoveToAbsolute(Player player) {
-		return this.GetDistMax(player) > 0;
-	}
-
-	public bool CanMove(Player player, Vector2 dir) {
-		Vector2 nextPosition = this.GetRelativePosition(player.transform.position) + dir;
+	public bool CanMove(Vector2 pos) {
 		return (
-			!this.IsOccupied(nextPosition) &&
-			!this.IsIndestructibleBlocCases(nextPosition) &&
-			!this.IsOutOfTerrain(nextPosition)
+			!this.IsOccupied(pos) &&
+			!this.IsIndestructibleBlocCases(pos) &&
+			!this.IsOutOfTerrain(pos)
+			// @todo : and there is a path
 		);
 	}
 
-	private Vector3 GetAbsoluteDirection(Vector2 dir) {
-		return new Vector3(dir.x, 0, dir.y);
+	public Vector2 GetNextRelativePosition(Vector2 pos, Vector2 dir) {
+		Vector2 relative_pos = PositionTools.RelativePosition(pos);
+		Vector2 next = relative_pos + dir;
+		if (this.CanMove(next)) {
+			return next;
+		} else {
+			return relative_pos;
+		}
 	}
 
 	public void MovePlayer(Player player, Vector2 dir) {
-		if (this.CanMove(player, dir)) {
-			player.transform.Translate(
-				Mathf.Min(player.speed, this.GetDistMax(player)) * this.GetAbsoluteDirection(dir)
-			);
-		}
+		Vector2 position = PositionTools.Position(player.transform.position);
+		Vector2 next_relative_position = this.GetNextRelativePosition(
+			position,
+			dir
+		);
+		Vector3 absolute_next_position = PositionTools.AbsoluteDirection(next_relative_position);
+		player.transform.position = Vector3.MoveTowards(
+			player.transform.position,
+			absolute_next_position,
+			Time.deltaTime * player.speed
+		);
 	}
 
 	// Bonuses
