@@ -6,10 +6,14 @@ using System.Collections.Generic;
  * Terrain : Singleton
  * 
  * @todo: add description of Terrain class here...
+ * @todo: remove AddBonus, insert in AddBlocks
+ * @todo: change AddBlocks : use list of available positions, ...
+ * @todo: remove all positions fonctions, use PositionTools instead
+ * @todo: debug player movements
+ * @todo: debug fire movements
  * 
  */
 using System.Linq;
-
 
 public class Terrain : MonoBehaviour {
 
@@ -42,6 +46,7 @@ public class Terrain : MonoBehaviour {
 	public GameObject bomb;
 	public GameObject destroyable_block;
 	public GameObject bonus;
+
 	private Dictionary<Vector2,GameObject> terrain;
 	private List<Fire> fires;
 	private List<string> list_bonus;
@@ -50,11 +55,11 @@ public class Terrain : MonoBehaviour {
 	void Start() {
 		this.terrain = new Dictionary<Vector2,GameObject>();
 		this.fires = new List<Fire>();
-		this.list_bonus = (List<string>)ReflectiveEnumerator.GetEnumerableOfType<Bonus> ();
+		this.list_bonus = (List<string>)ReflectiveEnumerator.GetEnumerableOfType<Bonus>();
 
 		this.AddBlocks();
-		this.players = GameObject.FindObjectsOfType<Player> ();
-		 this.AddBonus();
+		this.players = GameObject.FindObjectsOfType<Player>();
+		this.AddBonus();
 	}
 
 	private void FireUpdate() {
@@ -79,13 +84,13 @@ public class Terrain : MonoBehaviour {
 			} else if (this.IsIndestructibleBlocCases(fire.position)) {
 				firesToRemove.Add(fire);
 				continue;
-			} else{
-				for(int i = 0; i<this.players.Length; i++){
+			} else {
+				for (int i = 0 ; i < this.players.Length ; i++) {
 					Player p = this.players[i];
-					if(p != null){
-						if(this.GetRelativePosition(p.transform.position) == fire.position){
+					if (p != null) {
+						if (PositionTools.RelativePosition(p.transform.position) == fire.position) {
 							this.players[i] = null;
-							Destroy (p.gameObject);
+							Destroy(p.gameObject);
 						}
 					}
 				}
@@ -111,28 +116,13 @@ public class Terrain : MonoBehaviour {
 		FireUpdate();
 	}
 
-	public Vector3 GetAbsolutePosition(Vector3 v) {
-		float x = Mathf.Ceil(v.x - 0.5f);
-		float z = Mathf.Ceil(v.z - 0.5f);
-		return new Vector3(x, v.y, z);
-	}
-
-	public Vector2 GetRelativePosition(Vector3 v) {
-		Vector3 tmp = this.GetAbsolutePosition(v);
-		return new Vector2(tmp.x,tmp.z);
-	}
-
-	private Vector2 Vector2Abs(Vector2 v) {
-		return new Vector2(Mathf.Abs(v.x), Mathf.Abs(v.y));
-	}
-
 	private bool IsIndestructibleBlocCases(Vector2 v) {
-		Vector2 vabs = Vector2Abs(v);
+		Vector2 vabs = PositionTools.Abs(v);
 		return vabs.x % 2 == 1 && vabs.y % 2 == 0;
 	}
 
 	private bool IsForbidden(Vector2 v) {
-		Vector2 vabs = Vector2Abs(v);
+		Vector2 vabs = PositionTools.Abs(v);
 		bool isStartCasesForPlayers = (
 			(vabs.x == 5 && vabs.y == 5) ||
 			(vabs.x == 6 && (vabs.y == 4 || vabs.y == 5))
@@ -145,13 +135,13 @@ public class Terrain : MonoBehaviour {
 	}
 
 	public bool IsOccupied(Vector3 v) {
-		return this.IsOccupied(this.GetRelativePosition(v));
+		return this.IsOccupied(PositionTools.RelativePosition(v));
 	}
 
 	private GameObject MakeBomb(Player player) {
 		GameObject bomb_clone = (GameObject) Instantiate(
 			this.bomb,
-			this.GetAbsolutePosition(player.transform.position),
+			PositionTools.AbsolutePosition(player.transform.position),
 			Quaternion.identity
 		);
 
@@ -164,29 +154,20 @@ public class Terrain : MonoBehaviour {
 	public bool AddBomb(Player player) {
 		Vector3 player_pos = player.transform.position;
 		if (!this.IsOccupied(player_pos)) {
-			this.terrain.Add(this.GetRelativePosition(player_pos), this.MakeBomb(player));
+			this.terrain.Add(PositionTools.RelativePosition(player_pos), this.MakeBomb(player));
 			return true;
 		}
 		return false;
 	}
 	
 	public void ExplodeBomb(Bomb bomb) {
-		Vector2 pos = this.GetRelativePosition(bomb.transform.position);
+		Vector2 pos = PositionTools.RelativePosition(bomb.transform.position);
 
 		// Remove bomb from terrain & destroy GameObject
 		this.terrain.Remove(pos);
 		bomb.Explode();
 		Destroy(bomb.gameObject);
 
-		for(int i = 0; i<this.players.Length; i++){
-			Player p = this.players[i];
-			if(p != null){
-				if(this.GetRelativePosition(p.transform.position) == pos){
-					this.players[i] = null;
-					Destroy (p.gameObject);
-				}
-			}
-		}
 		// Launch Fires !
 		LaunchFire(pos, new Vector2(0,0), 1);
 		LaunchFire(pos, new Vector2(-1,0), bomb.player.power);
@@ -195,10 +176,9 @@ public class Terrain : MonoBehaviour {
 		LaunchFire(pos, new Vector2(0,-1), bomb.player.power);
 	}
 
-
-	private void LaunchFire(Vector2 pos, Vector2 dir,int power){
+	private void LaunchFire(Vector2 pos, Vector2 dir, int power) {
 		Vector2 new_pos = pos + dir;
-		if (!this.IsIndestructibleBlocCases (new_pos) && !this.IsOutOfTerrain (new_pos)) {
+		if (!this.IsIndestructibleBlocCases(new_pos) && !this.IsOutOfTerrain(new_pos)) {
 			this.fires.Add(new Fire(pos, dir, power));
 		}
 	}
@@ -209,7 +189,7 @@ public class Terrain : MonoBehaviour {
 			int x = Random.Range(-6,7);
 			int z = Random.Range(-5,6);
 			Vector3 v = new Vector3(x, 0.5f, z);
-			Vector2 v2 = GetRelativePosition(v);
+			Vector2 v2 = PositionTools.RelativePosition(v);
 			if (!this.IsOccupied(v2) && !this.IsForbidden(v2)) {
 				GameObject block = (GameObject) Instantiate(
 					this.destroyable_block,
@@ -220,18 +200,6 @@ public class Terrain : MonoBehaviour {
 				this.terrain.Add(v2, block);
 			}
 		}
-	}
-
-	public GameObject GetGameObject(Vector2 v){
-		return this.terrain [v];
-	}
-
-	public bool RemoveGameObject(Vector2 v){
-		if (this.IsOccupied(v)) {
-			this.terrain.Remove(v);
-			return true;
-		}
-		return false;
 	}
 
 	private bool IsOutOfTerrain(Vector2 v) {
@@ -271,15 +239,13 @@ public class Terrain : MonoBehaviour {
 		);
 	}
 
-	// Bonuses
-
 	private void AddBonus(){
 		int nb_bonus = 40;
 		for (int i = 0; i < nb_bonus; i++) {
 			int x = Random.Range (-6, 7);
 			int z = Random.Range (-5, 6);
 			Vector3 v = new Vector3 (x, 0.5f, z);
-			Vector2 v2 = GetRelativePosition (v);
+			Vector2 v2 = PositionTools.RelativePosition (v);
 			if (this.IsOccupied (v2)) {
 					GameObject bonus = (GameObject)Instantiate (
 						this.bonus,
