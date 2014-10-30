@@ -1,16 +1,12 @@
 using UnityEngine;
 using System.Collections;
 
-public class SpeedUp : Bonus
-{
-	// Use this for initialization
-	void Start ()
-	{
-		this.GetComponent<TextMesh> ().text = "Speed +";
+public class SpeedUp : Bonus {
+	void Start() {
+		this.GetComponent<TextMesh>().text = "Speed +";
 	}
 
-
-	protected override void AddBonus(Player p){
+	protected override void AddBonus(Player p) {
 		p.IncreaseSpeed();
 	}
 }

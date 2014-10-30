@@ -21,7 +21,7 @@ public class Player : MonoBehaviour {
 	void Start() {
 		this.speed = 4;
 		this.power = 0;
-		this.bombs_index_max = 2;
+		this.bombs_index_max = 1;
 		this.bombs_index_current = 0;
 		this.push_bomb = false;
 	}
@@ -30,7 +30,6 @@ public class Player : MonoBehaviour {
 		return this.bombs_index_current < this.bombs_index_max;
 	}
 
-	[MethodImpl(MethodImplOptions.Synchronized)]
 	public void BombHaveExplode() {
 		this.bombs_index_current--;
 	}
@@ -55,25 +54,25 @@ public class Player : MonoBehaviour {
 	}
 
 	private void AddBomb() {
-		if (Terrain.instance.AddBomb (this)) {
+		if (Terrain.instance.AddBomb(this)) {
 			this.bombs_index_current++;
 		}
 	}
 
 	// Add Bonus
-	public void IncreaseBomb(){
+	public void IncreaseBomb() {
 		this.bombs_index_max++;
 	}
 
-	public void IncreasePower(){
+	public void IncreasePower() {
 		this.power++;
 	}
 
-	public void IncreaseSpeed(){
+	public void IncreaseSpeed() {
 		this.speed += 0.5f;
 	}
 
-	public void CanPushBomb(){
+	public void CanPushBomb() {
 		this.push_bomb = true;
 	}
 }

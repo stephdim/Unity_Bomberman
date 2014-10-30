@@ -8,7 +8,10 @@ public class Fire {
 	public Vector2 position { get; private set; }
 	private Vector2 direction;
 	private int life;
-	private static GameObject fire_gameobject = GameObject.FindWithTag("Fire");
+<<<<<<< HEAD
+
+=======
+>>>>>>> origin/master
 
 	public Fire(Vector2 position, Vector2 direction, int life) {
 		this.direction = direction;
@@ -22,7 +25,7 @@ public class Fire {
 	}
 
 	public void Move() {
-		if (this.isDead()) {
+		if (this.isDead() || Terrain.instance.IsOutOfTerrain(this.position + this.direction)) {
 			return;
 		}
 		this.position += this.direction;
@@ -31,9 +34,12 @@ public class Fire {
 	}
 
 	private void Boom() {
-		GameObject fire_effect = (GameObject)Object.Instantiate (GameObject.Find("Fire"), PositionTools.AbsoluteDirection (position), Quaternion.identity);
-		fire_effect.SetActive (true);
+		GameObject fire_effect = (GameObject) Object.Instantiate(
+			GameObject.Find("Fire"),
+			PositionTools.AbsoluteDirection(position),
+			Quaternion.identity
+		);
 		fire_effect.particleSystem.Play();
-		Object.Destroy (fire_effect.gameObject, 1);
+		Object.Destroy(fire_effect.gameObject, 1);
 	}
 }
