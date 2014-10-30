@@ -10,7 +10,6 @@ using System.Collections.Generic;
  * @todo: change AddBlocks : use list of available positions, ...
  * @todo: remove all positions fonctions, use PositionTools instead
  * @todo: debug player movements
- * @todo: debug fire movements
  * 
  */
 using System.Linq;
@@ -202,7 +201,7 @@ public class Terrain : MonoBehaviour {
 		}
 	}
 
-	private bool IsOutOfTerrain(Vector2 v) {
+	public bool IsOutOfTerrain(Vector2 v) {
 		return v.x < -6 || v.x > 6 || v.y > 5 || v.y < -5;
 	}
 
