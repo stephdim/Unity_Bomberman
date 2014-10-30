@@ -8,10 +8,6 @@ public class Fire {
 	public Vector2 position { get; private set; }
 	private Vector2 direction;
 	private int life;
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/master
 
 	public Fire(Vector2 position, Vector2 direction, int life) {
 		this.direction = direction;

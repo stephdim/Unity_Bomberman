@@ -55,17 +55,6 @@ public class Terrain : MonoBehaviour {
 		this.terrain = new Dictionary<Vector2,GameObject>();
 		this.fires = new List<Fire>();
 		this.list_bonus = (List<string>)ReflectiveEnumerator.GetEnumerableOfType<Bonus>();
-<<<<<<< HEAD
-
-
-
-
-
-
-
-
-=======
->>>>>>> origin/master
 
 		this.AddBlocks();
 		this.players = GameObject.FindObjectsOfType<Player>();
