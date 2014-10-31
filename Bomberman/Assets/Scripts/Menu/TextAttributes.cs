@@ -18,7 +18,11 @@ public class TextAttributes : MonoBehaviour
 */
 	public GUIStyle title_style;
 	public GUIStyle button_style;
-
+	public Texture2D cursor;
+	void Init(){
+		Cursor.SetCursor (null, Vector2.zero, CursorMode.Auto);
+		guiTexture.enabled = true;
+	}
 	void OnGUI () {
 
 		GUI.Label (new Rect (Screen.width/2-30, Screen.height/10, 80, 20), "BomberBoy", this.title_style);
