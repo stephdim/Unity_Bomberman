@@ -3,7 +3,7 @@ using System.Collections;
 
 public class SpeedUp : Bonus {
 	void Start() {
-		this.GetComponent<TextMesh>().text = "Speed +";
+		this.GetComponent<MeshRenderer>().material.color = Color.white;
 	}
 
 	protected override void AddBonus(Player p) {

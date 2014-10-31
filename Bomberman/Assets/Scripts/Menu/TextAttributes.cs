@@ -25,12 +25,12 @@ public class TextAttributes : MonoBehaviour
 
 		// Make the first button. If it is pressed, Application.Loadlevel (1) will be executed
 		if(GUI.Button(new Rect(Screen.width/2 - 140,Screen.height/2,270,this.button_style.fontSize), "Jouer", this.button_style)) {
-			Application.LoadLevel("plateau bomberman");
+			Application.LoadLevel("Bomberman");
 		}
 		
 		// Make the second button.
 		if(GUI.Button(new Rect(Screen.width/2 - 260,Screen.height/2 + 100,500,this.button_style.fontSize), "Commandes", this.button_style)) {
-			Application.LoadLevel(3);
+			Application.LoadLevel(0);
 		}
 
 		if(GUI.Button(new Rect(Screen.width/2 - 160,Screen.height/2 + 200,300,this.button_style.fontSize), "Quitter", this.button_style)) {
