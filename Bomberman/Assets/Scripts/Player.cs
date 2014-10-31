@@ -35,21 +35,22 @@ public class Player : MonoBehaviour {
 	}
 
 	void Update() {
+		if (networkView.isMine) {
+			float h = Input.GetAxis(input_horizontal);
+			float v = Input.GetAxis(input_vertical);
 
-		float h = Input.GetAxis(input_horizontal);
-		float v = Input.GetAxis(input_vertical);
+			// Movement
+			if (h != 0 || v != 0) {
+				Terrain.instance.MovePlayer(this, new Vector2(
+					Mathf.Abs(h) > 0 ? 1 * Mathf.Sign(h) : 0,
+					Mathf.Abs(v) > 0 ? 1 * Mathf.Sign(v) : 0
+				));
+			}
 
-		// Movement
-		if (h != 0 || v != 0) {
-			Terrain.instance.MovePlayer(this, new Vector2(
-				Mathf.Abs(h) > 0 ? 1 * Mathf.Sign(h) : 0,
-				Mathf.Abs(v) > 0 ? 1 * Mathf.Sign(v) : 0
-			));
-		}
-
-		// Put bomb
-		if (Input.GetButton(input_fire) && this.CanAddBomb()) {
-			this.AddBomb();
+			// Put bomb
+			if (Input.GetButton(input_fire) && this.CanAddBomb()) {
+				this.AddBomb();
+			}
 		}
 	}
 
