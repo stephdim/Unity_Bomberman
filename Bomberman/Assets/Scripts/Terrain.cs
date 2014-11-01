@@ -33,7 +33,8 @@ public class Terrain : MonoBehaviour {
 	void Awake() {
 		if (_instance == null) {
 			_instance = this;
-			DontDestroyOnLoad(this);
+			// Si on ne détruit pas this au chargement, il y a un problème lors du chargement d'une nouvelle partie.
+			//DontDestroyOnLoad(this);
 		} else if (this != _instance) {
 			Destroy(this.gameObject);
 		}
@@ -50,14 +51,17 @@ public class Terrain : MonoBehaviour {
 	private List<Fire> fires;
 	private List<string> list_bonus;
 	private Player[] players;
+	private bool paused;
+	private int nb_player;
 
 	void Start() {
 		this.terrain = new Dictionary<Vector2,GameObject>();
 		this.fires = new List<Fire>();
 		this.list_bonus = (List<string>)ReflectiveEnumerator.GetEnumerableOfType<Bonus>();
-
+		this.paused = false;
 		this.AddBlocks();
 		this.players = GameObject.FindObjectsOfType<Player>();
+		this.nb_player = this.players.Length;
 		this.AddBonus();
 	}
 
@@ -77,7 +81,7 @@ public class Terrain : MonoBehaviour {
 					bombsToExplode.Add(bomb);
 				}
 
-				Destroy(gameObject);
+				Destroy(gameObject.gameObject);
 				firesToRemove.Add(fire);
 				continue;
 			} else if (this.IsIndestructibleBlocCases(fire.position)) {
@@ -89,6 +93,7 @@ public class Terrain : MonoBehaviour {
 					if (p != null) {
 						if (PositionTools.RelativePosition(p.transform.position) == fire.position) {
 							this.players[i] = null;
+							this.nb_player--;
 							Destroy(p.gameObject);
 						}
 					}
@@ -111,8 +116,19 @@ public class Terrain : MonoBehaviour {
 		}
 	}
 
+	private int timer_paused = 10;
+
 	void Update() {
 		FireUpdate();
+
+		if(Input.GetKey("p") && this.timer_paused == 0)
+		{
+			paused = !paused;
+			this.timer_paused = 10;
+		}
+		if (this.timer_paused != 0) {
+			this.timer_paused--;
+		}
 	}
 
 	private bool IsIndestructibleBlocCases(Vector2 v) {
@@ -259,5 +275,47 @@ public class Terrain : MonoBehaviour {
 				i--;
 			}
 		}
+	}
+
+	void OnGUI(){
+		// Menu pause
+		if(paused && this.nb_player > 1)
+		{
+			Time.timeScale = 0;
+			GUI.Box(new Rect(0.4f * Screen.width,0.6f * Screen.width/10,0.2f * Screen.width,0.3f * Screen.height),"Pause");
+			if(GUI.Button(new Rect(0.45f * Screen.width,0.8f * Screen.width/10,0.1f * Screen.width,0.05f * Screen.height),"Retour au jeu"))
+			{
+				paused = false;
+			}
+			if(GUI.Button(new Rect(0.45f * Screen.width,1.1f * Screen.width/10,0.1f * Screen.width,0.05f * Screen.height),"Retour au menu"))
+			{
+				Application.LoadLevel("Menu");
+			}
+			if(GUI.Button(new Rect(0.45f * Screen.width,1.4f * Screen.width/10,0.1f * Screen.width,0.05f * Screen.height),"Quitter"))
+			{
+				Application.Quit();
+			}
+		}
+		if (!paused) {
+			Time.timeScale = 1;
+		}
+		// Menu Game Over
+		if (this.nb_player <= 1) {
+			Time.timeScale = 0;
+			GUI.Box(new Rect(0.4f * Screen.width,0.6f * Screen.width/10,0.2f * Screen.width,0.3f * Screen.height),"Game Over");
+			if(GUI.Button(new Rect(0.45f * Screen.width,0.8f * Screen.width/10,0.1f * Screen.width,0.05f * Screen.height),"Nouvelle Partie"))
+			{
+				Application.LoadLevel("Bomberman");
+			}
+			if(GUI.Button(new Rect(0.45f * Screen.width,1.1f * Screen.width/10,0.1f * Screen.width,0.05f * Screen.height),"Retour au Menu"))
+			{
+				Application.LoadLevel("Menu");
+			}
+			if(GUI.Button(new Rect(0.45f * Screen.width,1.4f * Screen.width/10,0.1f * Screen.width,0.05f * Screen.height),"Quitter"))
+			{
+				Application.Quit();
+			}
+		}
+
 	}
 }

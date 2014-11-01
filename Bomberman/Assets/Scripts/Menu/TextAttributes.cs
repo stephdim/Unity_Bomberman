@@ -3,41 +3,24 @@ using System.Collections;
 
 public class TextAttributes : MonoBehaviour
 {
-
-/*	Color enter_color = Color.white;
-	Color leave_color = Color.green;
-
-
-	void OnMouseEnter(){
-		this.button_style.normal.textColor = enter_color;
-	}
-
-	void OnMouseExit(){
-		this.button_style.normal.textColor = leave_color;
-	}
-*/
+	
 	public GUIStyle title_style;
 	public GUIStyle button_style;
-	public Texture2D cursor;
-	void Init(){
-		Cursor.SetCursor (null, Vector2.zero, CursorMode.Auto);
-		guiTexture.enabled = true;
+
+	void Update() {
+		
 	}
+
+
 	void OnGUI () {
 
-		GUI.Label (new Rect (Screen.width/2-30, Screen.height/10, 80, 20), "BomberBoy", this.title_style);
+		GUI.Label (new Rect (0.4f * Screen.width,0.6f * Screen.width/10,0.2f * Screen.width,0.3f * Screen.height), "BomberBoy", this.title_style);
 
-		// Make the first button. If it is pressed, Application.Loadlevel (1) will be executed
-		if(GUI.Button(new Rect(Screen.width/2 - 140,Screen.height/2,270,this.button_style.fontSize), "Jouer", this.button_style)) {
+		if(GUI.Button(new Rect(0.4f * Screen.width,2.1f * Screen.width/10,0.2f * Screen.width,this.button_style.fontSize), "Jouer", this.button_style)) {
 			Application.LoadLevel("Bomberman");
 		}
-		
-		// Make the second button.
-		if(GUI.Button(new Rect(Screen.width/2 - 260,Screen.height/2 + 100,500,this.button_style.fontSize), "Commandes", this.button_style)) {
-			Application.LoadLevel(0);
-		}
 
-		if(GUI.Button(new Rect(Screen.width/2 - 160,Screen.height/2 + 200,300,this.button_style.fontSize), "Quitter", this.button_style)) {
+		if(GUI.Button(new Rect(0.4f * Screen.width,2.6f * Screen.width/10,0.2f * Screen.width,this.button_style.fontSize), "Quitter", this.button_style)) {
 			Application.Quit();
 		}
 	}
