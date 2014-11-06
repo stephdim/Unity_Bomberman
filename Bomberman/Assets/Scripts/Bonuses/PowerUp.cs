@@ -3,7 +3,7 @@ using System.Collections;
 
 public class PowerUp : Bonus {
 	void Start() {
-		this.GetComponent<TextMesh>().text = "Power +";
+		this.GetComponent<MeshRenderer>().material.color = Color.yellow;
 	}
 
 	protected override void AddBonus(Player p) {

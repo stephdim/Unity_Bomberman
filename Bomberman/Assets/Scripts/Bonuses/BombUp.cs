@@ -3,7 +3,7 @@ using System.Collections;
 
 public class BombUp : Bonus {
 	void Start() {
-		this.GetComponent<TextMesh>().text = "Bomb +";
+		this.GetComponent<MeshRenderer>().material.color = Color.blue;
 	}
 	
 	protected override void AddBonus(Player p) {

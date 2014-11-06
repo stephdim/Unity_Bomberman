@@ -2,7 +2,10 @@ fileFormatVersion: 2
 guid: f56449419b0d3e64c9af65f91d6acbcf
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - bomb: {fileID: 100000, guid: 1535ec8c0547d4c11b4934c8c5fbdca6, type: 2}
+  - destroyable_block: {fileID: 100000, guid: c7dbf1dbf38dd425b9143d1ea807405d, type: 2}
+  - bonus: {fileID: 100000, guid: 12567bc348a5ae04eb06a4baad5bff1c, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

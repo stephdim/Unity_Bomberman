@@ -21,7 +21,7 @@ public class Player : MonoBehaviour {
 	void Start() {
 		this.speed = 4;
 		this.power = 0;
-		this.bombs_index_max = 2;
+		this.bombs_index_max = 1;
 		this.bombs_index_current = 0;
 		this.push_bomb = false;
 	}
