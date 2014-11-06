@@ -116,18 +116,11 @@ public class Terrain : MonoBehaviour {
 		}
 	}
 
-	private int timer_paused = 10;
-
 	void Update() {
 		FireUpdate();
 
-		if(Input.GetKey("p") && this.timer_paused == 0)
-		{
-			paused = !paused;
-			this.timer_paused = 10;
-		}
-		if (this.timer_paused != 0) {
-			this.timer_paused--;
+		if (Input.GetKeyDown("p")) {
+			Pause();
 		}
 	}
 
@@ -277,42 +270,116 @@ public class Terrain : MonoBehaviour {
 		}
 	}
 
-	void OnGUI(){
+	void Pause() {
+		Time.timeScale = paused ? 1 : 0;
+		paused = !paused;
+	}
+
+	void OnGUI() {
+
 		// Menu pause
-		if(paused && this.nb_player > 1)
-		{
-			Time.timeScale = 0;
-			GUI.Box(new Rect(0.4f * Screen.width,0.6f * Screen.width/10,0.2f * Screen.width,0.3f * Screen.height),"Pause");
-			if(GUI.Button(new Rect(0.45f * Screen.width,0.8f * Screen.width/10,0.1f * Screen.width,0.05f * Screen.height),"Retour au jeu"))
-			{
-				paused = false;
+		if (paused && this.nb_player > 1) {
+
+			GUI.Box(
+				new Rect(
+					0.4f * Screen.width,
+					0.6f * Screen.height,
+					0.2f * Screen.width,
+					0.3f * Screen.height
+				),
+				"Pause"
+			);
+
+			if (GUI.Button(
+					new Rect(
+						0.45f * Screen.width,
+						0.8f * Screen.height,
+						0.1f * Screen.width,
+						0.05f * Screen.height
+					),
+					"Retour au jeu"
+				)) {
+
+				Pause();
 			}
-			if(GUI.Button(new Rect(0.45f * Screen.width,1.1f * Screen.width/10,0.1f * Screen.width,0.05f * Screen.height),"Retour au menu"))
-			{
+
+			if (GUI.Button(
+					new Rect(
+						0.45f * Screen.width,
+						1.1f * Screen.height,
+						0.1f * Screen.width,
+						0.05f * Screen.height
+					),
+					"Retour au menu"
+				)) {
+
 				Application.LoadLevel("Menu");
 			}
-			if(GUI.Button(new Rect(0.45f * Screen.width,1.4f * Screen.width/10,0.1f * Screen.width,0.05f * Screen.height),"Quitter"))
-			{
+
+			if (GUI.Button(
+					new Rect(
+						0.45f * Screen.width,
+						1.4f * Screen.height,
+						0.1f * Screen.width,
+						0.05f * Screen.height
+					),
+					"Quitter"
+				)) {
+
 				Application.Quit();
 			}
 		}
-		if (!paused) {
-			Time.timeScale = 1;
-		}
+
 		// Menu Game Over
 		if (this.nb_player <= 1) {
 			Time.timeScale = 0;
-			GUI.Box(new Rect(0.4f * Screen.width,0.6f * Screen.width/10,0.2f * Screen.width,0.3f * Screen.height),"Game Over");
-			if(GUI.Button(new Rect(0.45f * Screen.width,0.8f * Screen.width/10,0.1f * Screen.width,0.05f * Screen.height),"Nouvelle Partie"))
-			{
+			
+			GUI.Box(
+				new Rect(
+					0.4f * Screen.width,
+					0.6f * Screen.height,
+					0.2f * Screen.width,
+					0.3f * Screen.height
+				),
+				"Game Over"
+			);
+
+			if (GUI.Button(
+					new Rect(
+						0.45f * Screen.width,
+						0.8f * Screen.height,
+						0.1f * Screen.width,
+						0.05f * Screen.height
+					),
+					"Nouvelle Partie"
+				)) {
+
 				Application.LoadLevel("Bomberman");
 			}
-			if(GUI.Button(new Rect(0.45f * Screen.width,1.1f * Screen.width/10,0.1f * Screen.width,0.05f * Screen.height),"Retour au Menu"))
-			{
+
+			if (GUI.Button(
+					new Rect(
+						0.45f * Screen.width,
+						1.1f * Screen.height,
+						0.1f * Screen.width,
+						0.05f * Screen.height
+					),
+					"Retour au Menu"
+				)) {
+
 				Application.LoadLevel("Menu");
 			}
-			if(GUI.Button(new Rect(0.45f * Screen.width,1.4f * Screen.width/10,0.1f * Screen.width,0.05f * Screen.height),"Quitter"))
-			{
+
+			if (GUI.Button(
+					new Rect(
+						0.45f * Screen.width,
+						1.4f * Screen.height,
+						0.1f * Screen.width,
+						0.05f * Screen.height
+					),
+					"Quitter"
+				)) {
+
 				Application.Quit();
 			}
 		}
