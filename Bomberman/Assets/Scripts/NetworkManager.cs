@@ -6,13 +6,15 @@ using System.Collections;
 
 public class NetworkManager : MonoBehaviour {
 
-	private const string typeName = "StephdimUnityBomberman";
-	private const string gameName = "Test";
-
-	private HostData[] hostList;
 	public GameObject playerPrefab;
 
-	private int playerCount = 0; // OnPlayerConnected
+	const string typeName = "StephdimUnityBomberman";
+	string gameName = "Test";
+
+	HostData[] hostList;
+
+	int playerCount = 0; // OnPlayerConnected
+	string passwordToEdit = "";
 
 	void OnGUI() {
 		if (!Network.isClient && !Network.isServer) {
@@ -31,11 +33,22 @@ public class NetworkManager : MonoBehaviour {
 					}
 				}
 			}
+
+			gameName = GUI.TextField(new Rect(10, 10, 200, 20), gameName, 25);
+			passwordToEdit = GUI.PasswordField(new Rect(10, 35, 200, 20), passwordToEdit, '*', 25);
 		}
 	}
 	void OnMasterServerEvent(MasterServerEvent msEvent) {
 		if (msEvent == MasterServerEvent.HostListReceived) {
 			hostList = MasterServer.PollHostList();
+		} else if (msEvent == MasterServerEvent.RegistrationFailedGameName) {
+			Debug.Log("Registration failed because an empty game name was given.");
+		} else if (msEvent == MasterServerEvent.RegistrationFailedGameType) {
+			Debug.Log("Registration failed because an empty game type was given.");
+		} else if (msEvent == MasterServerEvent.RegistrationFailedNoServer) {
+			Debug.Log("Registration failed because no server is running.");
+		} else if (msEvent == MasterServerEvent.RegistrationSucceeded) {
+			Debug.Log("Registration to master server succeeded, received confirmation.");
 		}
 	}
 
@@ -63,8 +76,8 @@ public class NetworkManager : MonoBehaviour {
 	}
 	void OnPlayerDisconnected(NetworkPlayer player) {
 		Debug.Log("Clean up after player " + player);
-//		Network.RemoveRPCs(player);
-//		Network.DestroyPlayerObjects(player);
+		Network.RemoveRPCs(player);
+		Network.DestroyPlayerObjects(player);
 	}
 
 	private void StartServer() {
