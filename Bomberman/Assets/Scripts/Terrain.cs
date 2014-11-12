@@ -63,6 +63,8 @@ public class Terrain : MonoBehaviour {
 		this.players = GameObject.FindObjectsOfType<Player>();
 		this.nb_player = this.players.Length;
 		this.AddBonus();
+
+		Time.timeScale = 1;
 	}
 
 	private void FireUpdate() {
@@ -214,7 +216,7 @@ public class Terrain : MonoBehaviour {
 		return v.x < -6 || v.x > 6 || v.y > 5 || v.y < -5;
 	}
 
-	public bool CanMove(Vector2 pos) {
+	public bool IsFree(Vector2 pos){
 		return (
 			!this.IsOccupied(pos) &&
 			!this.IsIndestructibleBlocCases(pos) &&
@@ -223,10 +225,19 @@ public class Terrain : MonoBehaviour {
 		);
 	}
 
+	public bool CanMove(Vector2 old_pos, Vector2 new_pos) {
+		Vector2 next_x = new Vector2(new_pos.x,old_pos.y);
+		Vector2 next_y = new Vector2(old_pos.x,new_pos.y);
+		return (
+			IsFree(new_pos) &&
+			( IsFree(next_x) || IsFree(next_y) )
+		);
+	}
+
 	public Vector2 GetNextRelativePosition(Vector2 pos, Vector2 dir) {
 		Vector2 relative_pos = PositionTools.RelativePosition(pos);
 		Vector2 next = relative_pos + dir;
-		if (this.CanMove(next)) {
+		if (this.CanMove(relative_pos,next)) {
 			return next;
 		} else {
 			return relative_pos;
@@ -353,7 +364,6 @@ public class Terrain : MonoBehaviour {
 					),
 					"Nouvelle Partie"
 				)) {
-
 				Application.LoadLevel("Bomberman");
 			}
 
