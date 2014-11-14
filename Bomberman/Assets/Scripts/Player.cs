@@ -62,14 +62,23 @@ public class Player : MonoBehaviour {
 	// Add Bonus
 	public void IncreaseBomb() {
 		this.bombs_index_max++;
+		this.audio.Stop();
+		audio.clip = (AudioClip)Resources.Load ("Bomb+");
+		this.audio.Play();
 	}
 
 	public void IncreasePower() {
 		this.power++;
+		this.audio.Stop();
+		audio.clip = (AudioClip)Resources.Load ("Pouvoir+");
+		this.audio.Play();
 	}
 
 	public void IncreaseSpeed() {
 		this.speed += 0.5f;
+		this.audio.Stop();
+		audio.clip = (AudioClip)Resources.Load ("Vitesse+");
+		this.audio.Play();
 	}
 
 	public void CanPushBomb() {

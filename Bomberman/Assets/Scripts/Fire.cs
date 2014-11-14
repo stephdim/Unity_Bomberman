@@ -22,6 +22,7 @@ public class Fire {
 
 	public void Move() {
 		if (this.isDead() || Terrain.instance.IsOutOfTerrain(this.position + this.direction)) {
+			this.life = 0;
 			return;
 		}
 		this.position += this.direction;
@@ -35,6 +36,7 @@ public class Fire {
 			PositionTools.AbsoluteDirection(position),
 			Quaternion.identity
 		);
+		fire_effect.audio.Play();
 		fire_effect.particleSystem.Play();
 		Object.Destroy(fire_effect.gameObject, 1);
 	}

@@ -63,6 +63,7 @@ public class Terrain : MonoBehaviour {
 		this.players = GameObject.FindObjectsOfType<Player>();
 		this.nb_player = this.players.Length;
 		this.AddBonus();
+		Time.timeScale = 1;
 	}
 
 	private void FireUpdate() {
@@ -121,6 +122,10 @@ public class Terrain : MonoBehaviour {
 
 		if (Input.GetKeyDown("p")) {
 			Pause();
+		}
+
+		if (Input.GetKeyDown ("m")) {
+			AudioListener.pause = !AudioListener.pause;
 		}
 	}
 

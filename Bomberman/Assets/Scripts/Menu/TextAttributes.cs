@@ -5,7 +5,15 @@ public class TextAttributes : MonoBehaviour {
 
 	public GUIStyle title_style;
 	public GUIStyle button_style;
+	public AudioClip title_sound;
 
+	void Start(){
+		audio.PlayOneShot (title_sound);
+		if (Input.GetKeyDown ("m")) {
+			//audio.enabled = !audio.enabled;
+			AudioListener.pause = !AudioListener.pause;
+		}
+	}
 	void OnGUI () {
 		GUI.Label(
 			new Rect (
