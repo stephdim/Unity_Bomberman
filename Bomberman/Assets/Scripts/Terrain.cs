@@ -6,10 +6,6 @@ using System.Collections.Generic;
  * Terrain : Singleton
  * 
  * @todo: add description of Terrain class here...
- * @todo: remove AddBonus, insert in AddBlocks
- * @todo: change AddBlocks : use list of available positions, ...
- * @todo: remove all positions fonctions, use PositionTools instead
- * @todo: debug player movements
  * 
  */
 using System.Linq;
@@ -59,10 +55,9 @@ public class Terrain : MonoBehaviour {
 		this.fires = new List<Fire>();
 		this.list_bonus = (List<string>)ReflectiveEnumerator.GetEnumerableOfType<Bonus>();
 		this.paused = false;
-		this.AddBlocks();
+		this.Init();
 		this.players = GameObject.FindObjectsOfType<Player>();
 		this.nb_player = this.players.Length;
-		this.AddBonus();
 		Time.timeScale = 1;
 	}
 
@@ -196,25 +191,6 @@ public class Terrain : MonoBehaviour {
 		}
 	}
 
-	private void AddBlocks() {
-		int nb_block = 200;
-		for (int i = 0; i < nb_block; i++) {
-			int x = Random.Range(-6,7);
-			int z = Random.Range(-5,6);
-			Vector3 v = new Vector3(x, 0.5f, z);
-			Vector2 v2 = PositionTools.RelativePosition(v);
-			if (!this.IsOccupied(v2) && !this.IsForbidden(v2)) {
-				GameObject block = (GameObject) Instantiate(
-					this.destroyable_block,
-					v,
-					Quaternion.identity
-				);
-				block.SetActive(true);
-				this.terrain.Add(v2, block);
-			}
-		}
-	}
-
 	public bool IsOutOfTerrain(Vector2 v) {
 		return v.x < -6 || v.x > 6 || v.y > 5 || v.y < -5;
 	}
@@ -261,25 +237,50 @@ public class Terrain : MonoBehaviour {
 		);
 	}
 
-	private void AddBonus(){
-		int nb_bonus = 40;
-		for (int i = 0; i < nb_bonus; i++) {
-			int x = Random.Range (-6, 7);
-			int z = Random.Range (-5, 6);
-			Vector3 v = new Vector3 (x, 0.5f, z);
-			Vector2 v2 = PositionTools.RelativePosition (v);
-			if (this.IsOccupied (v2)) {
-					GameObject bonus = (GameObject)Instantiate (
-						this.bonus,
-						v,
-						Quaternion.identity
-					);
-				int kind = Random.Range(0,this.list_bonus.Count);
-				string t = this.list_bonus.ElementAt(kind);
-				bonus.AddComponent(t);
-				bonus.SetActive (true);
-			} else {
-				i--;
+	private void Init() {
+
+		/* stock all available cases */
+		/* select random cases */
+		/* add powers randomly */
+
+		int nb_block = Random.Range(75,96); /* 101 max */
+
+		List<Vector2> positions = new List<Vector2>();
+		for (int x = -6; x <= 6; x++) {
+			for (int y = -5; y <= 5; y++) {
+				Vector2 v = new Vector2(x, y);
+				if (!IsForbidden(v)) { positions.Add(v); }
+			}
+		}
+
+		for (int x = 0; x < nb_block; x++) {
+			int rand = Random.Range(0,positions.Count);
+			Vector2 pos = positions[rand];
+			Vector3 v = new Vector3(pos.x, 0.5f, pos.y);
+			positions.RemoveAt(rand);
+
+			/* add block */
+			GameObject block = (GameObject) Instantiate(
+				this.destroyable_block,
+				v,
+				Quaternion.identity
+			);
+			block.SetActive(true);
+			this.terrain.Add(pos, block);
+
+			/* add bonus 1/4 */
+			if (Random.Range(0,4) == 0) {
+				GameObject bonus = (GameObject) Instantiate(
+					this.bonus,
+					v,
+					Quaternion.identity
+				);
+				bonus.AddComponent(
+					this.list_bonus.ElementAt(
+						Random.Range(0, this.list_bonus.Count)
+					)
+				);
+				bonus.SetActive(true);
 			}
 		}
 	}
