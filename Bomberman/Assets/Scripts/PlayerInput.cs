@@ -31,7 +31,7 @@ public class PlayerInput : MonoBehaviour {
 			} else {
 				return new Vector2(corrected_x_approx, dir.y);
 			}
-		} else { // Mathf.Abs(dir.x) > 0
+		} else if (Mathf.Abs(dir.x) > 0) {
 			if (Mathf.Abs(corrected_x_approx) <= correction) {
 				return new Vector2(dir.x, corrected_y);
 			} else {
@@ -39,7 +39,7 @@ public class PlayerInput : MonoBehaviour {
 			}
 		}
 
-		return dir;
+		return dir; // never used
 	}
 
 	bool CanMoveWithCurrentSpeed(Vector2 dir) {
@@ -50,7 +50,9 @@ public class PlayerInput : MonoBehaviour {
 		Vector2 pos2_round = new Vector2(Mathf.Round(pos2.x), Mathf.Round(pos2.y));
 
 		// in terrain
-		if (!(Mathf.Abs(dest.x) <= 6 && Mathf.Abs(dest.y) <= 5)) { return false; }
+		if (!(Mathf.Abs(dest.x) <= 6 && Mathf.Abs(dest.y) <= 5)) {
+			return false;
+		}
 
 		// in corridor
 		if (!((dir_abs.y > 0 && Mathf.Round(Mathf.Abs(dest.x)) % 2 == 0) ||
@@ -101,8 +103,6 @@ public class PlayerInput : MonoBehaviour {
 
 	void Update() {
 		if (Time.timeScale != 1) { return; }
-
-		player.colliders.ForEach(Debug.Log);
 
 		float h = Input.GetAxis(input_horizontal);
 		float v = Input.GetAxis(input_vertical);

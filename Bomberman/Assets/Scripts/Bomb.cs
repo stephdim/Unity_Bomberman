@@ -18,14 +18,13 @@ public class Bomb : MonoBehaviour {
 			Quaternion.identity
 		);
 		bomb_clone.GetComponent<Bomb>().player = player;
-		// bomb_clone.GetComponent<Bomb>().InitCollisions();
+		bomb_clone.GetComponent<Bomb>().InitCollisions();
 
 		return bomb_clone;
 	}
 
 	void Start() {
 		Invoke("Boom", 2);
-		Time.timeScale = .5f;
 	}
 
 	void InitCollisions() {
