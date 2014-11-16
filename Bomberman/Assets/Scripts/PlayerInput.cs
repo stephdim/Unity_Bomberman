@@ -8,7 +8,6 @@ public class PlayerInput : MonoBehaviour {
 	string input_fire;
 
 	Player player;
-	string last_key_pressed;
 
 	void SetPlayerNumber(int id) {
 		input_horizontal = "Horizontal" + id;
@@ -100,10 +99,6 @@ public class PlayerInput : MonoBehaviour {
 		return false;
 	}
 
-	bool LastKeyPressed(string last) {
-		return last_key_pressed == last;
-	}
-
 	void Update() {
 		if (Time.timeScale != 1) { return; }
 
@@ -115,36 +110,10 @@ public class PlayerInput : MonoBehaviour {
 		Vector2 vh = new Vector2(1 * Mathf.Sign(h), 0);
 		Vector2 vv = new Vector2(0, 1 * Mathf.Sign(v));
 
-		if (v != 0 || h != 0) {
-			if (LastKeyPressed("")) {
-				if (h != 0 && CanMove(vh)) {
-					Move(vh);
-					// last_key_pressed = "h";
-				} else if (v != 0 && CanMove(vv)) {
-					Move(vv);
-					// last_key_pressed = "v";
-				}
-			} else {
-				if (LastKeyPressed("h")) {
-					if (v != 0 && CanMove(vv)) {
-						Move(vv);
-						last_key_pressed = "v";
-					} else if (h != 0 && CanMove(vh)) {
-						Move(vh);
-						last_key_pressed = "h";
-					}
-				} else { // v
-					if (h != 0 && CanMove(vh)) {
-						Move(vh);
-						last_key_pressed = "h";
-					} else if (v != 0 && CanMove(vv)) {
-						Move(vv);
-						last_key_pressed = "v";
-					}
-				}
-			}
-		} else {
-			last_key_pressed = "";
+		if (h != 0 && CanMove(vh)) {
+			Move(vh);
+		} else if (v != 0 && CanMove(vv)) {
+			Move(vv);
 		}
 
 		// Put bomb
