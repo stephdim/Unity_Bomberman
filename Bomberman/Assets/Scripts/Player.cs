@@ -4,37 +4,34 @@ using System.Collections.Generic;
 
 public class Player : MonoBehaviour {
 
-	public static GameObject[] players = new GameObject[4];
-	public static int playerCount = 0;
+	public static List<Player> players = new List<Player>();
 
 	/* Characteristics */
+	public int id { get; private set; }
 	public float speed { get; set; }
 	public int power { get; set; }
 	public int nb_bombs { get; set; }
-	
-	public static Vector2 Position(GameObject go) {
-		Player p = go.GetComponent<Player>();
-		return new Vector2(
-			Mathf.Round(p.transform.position.x),
-			Mathf.Round(p.transform.position.z)
-		);
-	}
-
 	public List<GameObject> colliders { get; private set; }
+	public Vector2 position {
+		get {
+			return new Vector2(
+				Mathf.Round(transform.position.x),
+				Mathf.Round(transform.position.z)
+			);
+		}
+	}
 
 	/* Intern functionnalities */
 	int bombs_index_current;
 
 	void register() {
-		int id = playerCount;
-		players[id] = gameObject;
-		SendMessage("SetPlayerNumber", id); // for InputPlayer
-		playerCount++;
+		id = players.Count;
+		players.Add(this);
+		SendMessage("SetInputPlayer", this); // for InputPlayer
 	}
 
 	void unregister() {
-		// players[id] = null;
-		playerCount--;
+		players.Remove(this);
 	}
 
 	void Start() {
@@ -83,15 +80,11 @@ public class Player : MonoBehaviour {
 	}
 
 	public static void AddCollisions(GameObject gameObject) {
-		for (int i = 0; i < playerCount ; i++) {
-			players[i].GetComponent<Player>().AddCollisionWith(gameObject);
-		}
+		players.ForEach(p => p.AddCollisionWith(gameObject));
 	}
 
 	public static void RemoveCollisions(GameObject gameObject) {
-		for (int i = 0; i < playerCount ; i++) {
-			players[i].GetComponent<Player>().RemoveCollisionWith(gameObject);
-		}
+		players.ForEach(p => p.RemoveCollisionWith(gameObject));
 	}
 
 // Add Bonus

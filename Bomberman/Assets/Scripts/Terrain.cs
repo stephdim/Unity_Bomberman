@@ -9,12 +9,10 @@ public class Terrain : MonoBehaviour {
 
 	List<string> list_bonus;
 	bool paused;
-	int playerCount;
 	bool gameOver;
 
 	void Start() {
 		list_bonus = (List<string>) ReflectiveEnumerator.GetEnumerableOfType<Bonus>();
-		playerCount = Player.playerCount;
 		gameOver = false;
 
 		Play();
@@ -29,8 +27,6 @@ public class Terrain : MonoBehaviour {
 		if (Input.GetKeyDown("m")) {
 			AudioListener.pause = !AudioListener.pause;
 		}
-
-		CheckEvents();
 	}
 /*
 	void Init() {
@@ -90,20 +86,6 @@ public class Terrain : MonoBehaviour {
 		paused = !paused;
 	}
 
-	void CheckEvents() {
-		if (playerCount != Player.playerCount) {
-			playerCount = Player.playerCount;
-			if (playerCount < 2) {
-				GameOver();
-			}
-		}
-	}
-
-	void GameOver() {
-		Time.timeScale = 0;
-		gameOver = true;
-	}
-
 	void OnGUI() {
 
 		// Menu pause
@@ -160,7 +142,11 @@ public class Terrain : MonoBehaviour {
 		}
 
 		// Menu Game Over
-		if (gameOver) {
+		if (gameOver || Player.players.Count < 2) {
+			if (!gameOver) {
+				Time.timeScale = 0;
+				gameOver = true;
+			}
 
 			GUI.Box(
 				new Rect(

@@ -9,12 +9,12 @@ public class PlayerInput : MonoBehaviour {
 
 	Player player;
 
-	void SetPlayerNumber(int id) {
-		input_horizontal = "Horizontal" + id;
-		input_vertical = "Vertical" + id;
-		input_fire = "Fire" + id;
+	void SetInputPlayer(Player p) {
+		input_horizontal = "Horizontal" + p.id;
+		input_vertical = "Vertical" + p.id;
+		input_fire = "Fire" + p.id;
 
-		player = (Player) Player.players[id].GetComponent<Player>();
+		player = p;
 	}
 
 	Vector2 GetCorrectedDir(Vector2 dir) {

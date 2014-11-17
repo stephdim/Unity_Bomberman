@@ -39,15 +39,9 @@ public class Fire : MonoBehaviour {
 		particleSystem.Play();
 
 		// check if player (don't stop explosion)
-		for (int i = 0; i < Player.playerCount ; i++) {
-			if (
-				Player.Position(Player.players[i])
-				==
-				new Vector2(transform.position.x, transform.position.z)
-				) {
-				Destroy(Player.players[i].gameObject);
-			}
-		}
+		Vector2 pos = new Vector2(transform.position.x, transform.position.z);
+		List<Player> players = Player.players.FindAll(p => p.position == pos);
+		players.ForEach(p => Destroy(p.gameObject));
 
 		// check if in block or bomb (stop explosion)
 		bool have_destroy = false;
