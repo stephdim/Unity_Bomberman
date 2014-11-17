@@ -4,9 +4,6 @@ using System.Collections.Generic;
 
 public class Terrain : MonoBehaviour {
 
-	// static GameObject destroyable_block = Resources.Load("Block") as GameObject;
-	// static GameObject bonus = Resources.Load("Bonus") as GameObject;
-
 	List<string> list_bonus;
 	bool paused;
 	bool gameOver;
@@ -16,7 +13,7 @@ public class Terrain : MonoBehaviour {
 		gameOver = false;
 
 		Play();
-		// Init();
+		Init();
 	}
 
 	void Update() {
@@ -28,7 +25,21 @@ public class Terrain : MonoBehaviour {
 			AudioListener.pause = !AudioListener.pause;
 		}
 	}
-/*
+
+	bool IsIndestructibleBlocCases(Vector2 v) {
+		Vector2 vabs = PositionTools.Abs(v);
+		return vabs.x % 2 == 1 && vabs.y % 2 == 0;
+	}
+
+	bool IsForbidden(Vector2 v) {
+		Vector2 vabs = PositionTools.Abs(v);
+		bool isStartCasesForPlayers = (
+			(vabs.x == 5 && vabs.y == 5) ||
+			(vabs.x == 6 && (vabs.y == 4 || vabs.y == 5))
+		);
+		return isStartCasesForPlayers || IsIndestructibleBlocCases(v);
+	}
+
 	void Init() {
 
 		// stock all available cases
@@ -46,36 +57,21 @@ public class Terrain : MonoBehaviour {
 		}
 
 		for (int x = 0; x < nb_block; x++) {
-			int rand = Random.Range(0,positions.Count);
+			int rand = Random.Range(0, positions.Count);
 			Vector2 pos = positions[rand];
-			Vector3 v = new Vector3(pos.x, 0.5f, pos.y);
+			Vector3 v = new Vector3(pos.x, 0.25f, pos.y);
 			positions.RemoveAt(rand);
 
 			// add block
-			GameObject block = (GameObject) Instantiate(
-				destroyable_block,
-				v,
-				Quaternion.identity
-			);
-			block.SetActive(true);
+			Block.Put(v);
 
 			// add bonus 1/4
 			if (Random.Range(0,4) == 0) {
-				GameObject bonus = (GameObject) Instantiate(
-					bonus,
-					v,
-					Quaternion.identity
-				);
-				bonus.AddComponent(
-					list_bonus.ElementAt(
-						Random.Range(0, this.list_bonus.Count)
-					)
-				);
-				bonus.SetActive(true);
+				Bonus.Put(v, list_bonus[(Random.Range(0, this.list_bonus.Count))]);
 			}
 		}
 	}
-*/
+
 	void Play() {
 		paused = false;
 		Time.timeScale = 1;
@@ -84,6 +80,10 @@ public class Terrain : MonoBehaviour {
 	void Pause() {
 		Time.timeScale = paused ? 1 : 0;
 		paused = !paused;
+	}
+
+	bool IsOver() {
+		return false; // Player.players.Count < 2
 	}
 
 	void OnGUI() {
@@ -142,7 +142,7 @@ public class Terrain : MonoBehaviour {
 		}
 
 		// Menu Game Over
-		if (gameOver || Player.players.Count < 2) {
+		if (gameOver || IsOver()) {
 			if (!gameOver) {
 				Time.timeScale = 0;
 				gameOver = true;
@@ -196,7 +196,6 @@ public class Terrain : MonoBehaviour {
 				Application.Quit();
 			}
 		}
-
 	}
 
 }
