@@ -8,6 +8,7 @@ public class PowerUp : Bonus {
 	}
 
 	protected override void AddBonus(Player p) {
+		SoundManager.Launch("Pouvoir+");
 		p.power++;
 	}
 

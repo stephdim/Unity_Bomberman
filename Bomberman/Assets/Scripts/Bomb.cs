@@ -33,6 +33,8 @@ public class Bomb : MonoBehaviour {
 	}
 
 	public void Boom() {
+		SoundManager.Launch("Boom");
+
 		// Launch Fires !
 		Fire.Launch(transform.position, new Vector2(0,0), 0);
 		Fire.Launch(transform.position, new Vector2(-1,0), player.power);

@@ -8,6 +8,7 @@ public class BombUp : Bonus {
 	}
 
 	protected override void AddBonus(Player p) {
+		SoundManager.Launch("Bomb+");
 		p.nb_bombs++;
 	}
 

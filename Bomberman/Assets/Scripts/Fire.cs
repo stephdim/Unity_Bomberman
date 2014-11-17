@@ -37,6 +37,7 @@ public class Fire : MonoBehaviour {
 
 	void SpreadFire() {
 		particleSystem.Play();
+		SoundManager.Launch("FFFrrr");
 
 		// check if player (don't stop explosion)
 		Vector2 pos = new Vector2(transform.position.x, transform.position.z);

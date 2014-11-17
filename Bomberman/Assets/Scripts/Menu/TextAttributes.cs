@@ -8,12 +8,12 @@ public class TextAttributes : MonoBehaviour {
 	public AudioClip title_sound;
 
 	void Start(){
-		audio.PlayOneShot (title_sound);
-		if (Input.GetKeyDown ("m")) {
-			//audio.enabled = !audio.enabled;
+		audio.PlayOneShot(title_sound);
+		if (Input.GetKeyDown("m")) {
 			AudioListener.pause = !AudioListener.pause;
 		}
 	}
+
 	void OnGUI () {
 		GUI.Label(
 			new Rect (
