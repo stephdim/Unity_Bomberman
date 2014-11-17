@@ -44,7 +44,10 @@ public class Fire : MonoBehaviour {
 		Player.players.FindAll(p => p.position == pos).ForEach(p => Destroy(p.gameObject));
 
 		// check if bomb (don't stop explosion)
-		// Player.players.FindAll(p => p.position == pos).ForEach(p => Destroy(p.gameObject));
+		List<Bomb> bombs = (new List<GameObject>(
+			GameObject.FindGameObjectsWithTag("Bomb")
+		)).ConvertAll<Bomb>(f => f.GetComponent<Bomb>());
+		bombs.FindAll(b => !b.is_exploded && b.position == pos).ForEach(b => b.Boom());
 
 		// check if in block or bomb (stop explosion)
 		bool have_destroy = false;

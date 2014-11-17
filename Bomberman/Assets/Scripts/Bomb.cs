@@ -4,7 +4,16 @@ using System.Collections;
 public class Bomb : MonoBehaviour {
 
 	/* Characteristics */
+	public bool is_exploded { get; private set; }
 	public Player player { get; set; }
+	public Vector2 position {
+		get {
+			return new Vector2(
+				Mathf.Round(transform.position.x),
+				Mathf.Round(transform.position.z)
+			);
+		}
+	}
 
 	public static GameObject Put(Player player) {
 		GameObject bomb_prefab = (GameObject) Resources.Load("Bomb");
@@ -24,6 +33,7 @@ public class Bomb : MonoBehaviour {
 	}
 
 	void Start() {
+		is_exploded = false;
 		Invoke("Boom", 2);
 	}
 
@@ -33,6 +43,8 @@ public class Bomb : MonoBehaviour {
 	}
 
 	public void Boom() {
+		CancelInvoke();
+		is_exploded = true;
 		SoundManager.Launch("Boom");
 
 		// Launch Fires !

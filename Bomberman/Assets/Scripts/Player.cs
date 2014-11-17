@@ -39,7 +39,7 @@ public class Player : MonoBehaviour {
 
 		speed = .1f;
 		power = 0;
-		nb_bombs = 2;
+		nb_bombs = 1;
 		bombs_index_current = 0;
 		colliders = new List<GameObject>();
 	}
