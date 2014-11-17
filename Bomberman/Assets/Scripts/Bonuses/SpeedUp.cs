@@ -9,7 +9,7 @@ public class SpeedUp : Bonus {
 
 	protected override void AddBonus(Player p) {
 		SoundManager.Launch("Vitesse+");
-		p.speed += .05f;
+		p.speed += .01f;
 	}
 
 }

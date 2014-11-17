@@ -3,6 +3,15 @@ using System.Collections;
 
 public class Bonus : MonoBehaviour {
 
+	public Vector2 position {
+		get {
+			return new Vector2(
+				Mathf.Round(transform.position.x),
+				Mathf.Round(transform.position.z)
+			);
+		}
+	}
+
 	public static GameObject Put(Vector3 pos, string type) {
 		GameObject bonus_prefab = (GameObject) Resources.Load("Bonus");
 

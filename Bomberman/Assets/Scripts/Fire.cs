@@ -43,6 +43,9 @@ public class Fire : MonoBehaviour {
 		Vector2 pos = new Vector2(transform.position.x, transform.position.z);
 		Player.players.FindAll(p => p.position == pos).ForEach(p => Destroy(p.gameObject));
 
+		// check if bomb (don't stop explosion)
+		// Player.players.FindAll(p => p.position == pos).ForEach(p => Destroy(p.gameObject));
+
 		// check if in block or bomb (stop explosion)
 		bool have_destroy = false;
 		List<Block> blocks = Block.blocks.FindAll(b => b.position == pos);
@@ -54,6 +57,12 @@ public class Fire : MonoBehaviour {
 		if (have_destroy) {
 			Die();
 			return;
+		} else { // check here for don't destroy at the same time of block
+			// check if bonus (don't stop explosion)
+			List<Bonus> bonuses = (new List<GameObject>(
+				GameObject.FindGameObjectsWithTag("Bonus")
+			)).ConvertAll<Bonus>(f => f.GetComponent<Bonus>());
+			bonuses.FindAll(b => b.position == pos).ForEach(b => Destroy(b.gameObject));
 		}
 
 		if (life > 0) {
