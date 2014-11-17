@@ -39,7 +39,7 @@ public class Player : MonoBehaviour {
 
 		speed = .1f;
 		power = 0;
-		nb_bombs = 1;
+		nb_bombs = 2;
 		bombs_index_current = 0;
 		colliders = new List<GameObject>();
 	}
@@ -57,7 +57,8 @@ public class Player : MonoBehaviour {
 	}
 
 	void AddBomb() {
-		if (CanPutBomb()) {
+		List<GameObject> bombs = new List<GameObject>(GameObject.FindGameObjectsWithTag("Bomb"));
+		if (CanPutBomb() && !bombs.Exists(go => position == new Vector2(go.transform.position.x, go.transform.position.z))) {
 			bombs_index_current++;
 			Bomb.Put(this);
 		}
