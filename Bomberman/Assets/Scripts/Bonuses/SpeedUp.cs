@@ -4,11 +4,11 @@ using System.Collections;
 public class SpeedUp : Bonus {
 
 	void Start() {
-		this.GetComponent<MeshRenderer>().material.color = Color.white;
+		GetComponent<MeshRenderer>().material.color = Color.white;
 	}
 
 	protected override void AddBonus(Player p) {
-		p.speed += .5f;
+		p.speed += .05f;
 	}
 
 }

@@ -44,7 +44,11 @@ public class Fire : MonoBehaviour {
 
 		// check if in block or bomb (stop explosion)
 		bool have_destroy = false;
-		// @todo
+		List<Block> blocks = Block.blocks.FindAll(b => b.position == pos);
+		if (blocks.Count > 0) {
+			blocks.ForEach(b => Destroy(b.gameObject));
+			have_destroy = true;
+		}
 
 		if (have_destroy) {
 			Die();

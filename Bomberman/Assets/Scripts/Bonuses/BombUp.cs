@@ -4,7 +4,7 @@ using System.Collections;
 public class BombUp : Bonus {
 
 	void Start() {
-		this.GetComponent<MeshRenderer>().material.color = Color.blue;
+		GetComponent<MeshRenderer>().material.color = Color.blue;
 	}
 
 	protected override void AddBonus(Player p) {
