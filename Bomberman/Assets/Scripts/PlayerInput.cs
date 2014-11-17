@@ -104,6 +104,8 @@ public class PlayerInput : MonoBehaviour {
 	void Update() {
 		if (Time.timeScale != 1) { return; }
 
+		print("colliders.Count = " + player.colliders.Count);
+
 		float h = Input.GetAxis(input_horizontal);
 		float v = Input.GetAxis(input_vertical);
 

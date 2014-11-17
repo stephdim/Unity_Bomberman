@@ -87,11 +87,5 @@ public class Player : MonoBehaviour {
 		players.ForEach(p => p.RemoveCollisionWith(gameObject));
 	}
 
-// Add Bonus
-/*
-this.audio.Stop();
-audio.clip = (AudioClip) Resources.Load("Bomb+");
-this.audio.Play();
-*/
 }
 
