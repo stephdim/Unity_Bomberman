@@ -3,6 +3,8 @@ using System.Collections;
 
 public class PlayerInput : MonoBehaviour {
 
+	public GameObject character;
+
 	string input_horizontal;
 	string input_vertical;
 	string input_fire;
@@ -112,8 +114,14 @@ public class PlayerInput : MonoBehaviour {
 
 		if (h != 0 && CanMove(vh)) {
 			Move(vh);
+			GetComponentInChildren<Animation>().Play("run");
+			character.transform.rotation = Quaternion.AngleAxis(90 * Mathf.Sign(h), Vector3.up);
 		} else if (v != 0 && CanMove(vv)) {
 			Move(vv);
+			GetComponentInChildren<Animation>().Play("run");
+			character.transform.rotation = Quaternion.AngleAxis(Mathf.Sign(v) > 0 ? 0 : 180, Vector3.up);
+		} else {
+			GetComponentInChildren<Animation>().Play("idle");
 		}
 
 		// Put bomb
