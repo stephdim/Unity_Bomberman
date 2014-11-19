@@ -7,12 +7,12 @@ public class Bomb : MonoBehaviour {
 	public Player player { get; set; }
 	
 	void Start() {
-		audio.PlayDelayed(1.2f);
 		Invoke("Boom", 2);
 	}
 
 
 	public void Boom() {
+		Camera.main.GetComponent<CameraAudio> ().BoomSound ();
 		Terrain.instance.ExplodeBomb(this);
 	}
 
