@@ -11,12 +11,20 @@ public class PlayerInput : MonoBehaviour {
 
 	Player player;
 
+	bool input_setted;
+
+	void Start() {
+		input_setted = false;
+	}
+
 	void SetInputPlayer(Player p) {
 		input_horizontal = "Horizontal" + p.id;
 		input_vertical = "Vertical" + p.id;
 		input_fire = "Fire" + p.id;
 
 		player = p;
+
+		input_setted = true;
 	}
 
 	Vector2 GetCorrectedDir(Vector2 dir) {
@@ -104,7 +112,7 @@ public class PlayerInput : MonoBehaviour {
 	}
 
 	void Update() {
-		if (Time.timeScale != 1) { return; }
+		if (Time.timeScale != 1 || !input_setted) { return; }
 
 		float h = Input.GetAxis(input_horizontal);
 		float v = Input.GetAxis(input_vertical);

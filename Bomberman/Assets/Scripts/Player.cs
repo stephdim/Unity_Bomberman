@@ -21,6 +21,16 @@ public class Player : MonoBehaviour {
 		}
 	}
 
+	public static GameObject Put(Vector3 v) {
+		GameObject player_prefab = (GameObject) Resources.Load("Player");
+		GameObject player_clone = (GameObject) Instantiate(
+			player_prefab,
+			v,
+			Quaternion.identity
+		);
+		return player_clone;
+	}
+
 	/* Intern functionnalities */
 	int bombs_index_current;
 
@@ -41,7 +51,7 @@ public class Player : MonoBehaviour {
 		power = 0;
 		nb_bombs = 1;
 		bombs_index_current = 0;
-		colliders = new List<GameObject>();
+		colliders = Block.blocks.ConvertAll<GameObject>(b => b.gameObject);
 	}
 
 	void OnDestroy() {
