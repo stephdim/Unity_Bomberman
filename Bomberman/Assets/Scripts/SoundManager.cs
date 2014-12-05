@@ -17,10 +17,12 @@ public class SoundManager : MonoBehaviour {
 
 	public void Play(string sound) {
 		AudioClip audioClip;
+		float volume = 1;
 		if (sound == "Bomb+") {
 			audioClip = bomb_plus;
 		} else if (sound == "Boom") {
 			audioClip = boom;
+			volume = .6f;
 		} else if (sound == "FFFrrr") {
 			audioClip = fffrrr;
 		} else if (sound == "Level1") {
@@ -32,7 +34,7 @@ public class SoundManager : MonoBehaviour {
 		} else {
 			throw new ArgumentException("sound not found", "sound");
 		}
-		AudioSource.PlayClipAtPoint(audioClip, Camera.main.transform.position);
+		AudioSource.PlayClipAtPoint(audioClip, Camera.main.transform.position, volume);
 	}
 
 	void Start() {
