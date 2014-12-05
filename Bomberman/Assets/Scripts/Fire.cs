@@ -32,7 +32,7 @@ public class Fire : MonoBehaviour {
 		this.dir = dir;
 		this.life = life;
 
-		SpreadFire();
+		Invoke("SpreadFire", 0);
 	}
 
 	void SpreadFire() {
