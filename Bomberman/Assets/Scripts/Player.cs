@@ -11,6 +11,7 @@ public class Player : MonoBehaviour {
 	public float speed { get; set; }
 	public int power { get; set; }
 	public int nb_bombs { get; set; }
+	public bool can_push { get; set; }
 	public List<GameObject> colliders { get; private set; }
 	public Vector2 position {
 		get {
@@ -66,6 +67,10 @@ public class Player : MonoBehaviour {
 		return bombs_index_current < nb_bombs;
 	}
 
+	public void CanPushBomb() {
+		can_push = true;
+	}
+
 	void AddBomb() {
 		List<GameObject> bombs = new List<GameObject>(GameObject.FindGameObjectsWithTag("Bomb"));
 		if (CanPutBomb() && !bombs.Exists(go => position == new Vector2(go.transform.position.x, go.transform.position.z))) {
@@ -98,5 +103,18 @@ public class Player : MonoBehaviour {
 		players.ForEach(p => p.RemoveCollisionWith(gameObject));
 	}
 
+	void PushBomb(Vector2 dir){
+		if (can_push) {
+			foreach (GameObject obj in colliders) {
+				Bomb bomb = obj.GetComponent<Bomb> ();
+				if (bomb != null) {
+					if (bomb.position == this.position + dir) {
+						bomb.PushBomb (this);
+						return;
+					}
+				}
+			}
+		}
+	}
 }
 

@@ -32,7 +32,7 @@ public class Fire : MonoBehaviour {
 		this.dir = dir;
 		this.life = life;
 
-		Invoke("SpreadFire", 0);
+		Invoke("SpreadFire", 0.0001f);
 	}
 
 	void SpreadFire() {
@@ -81,7 +81,7 @@ public class Fire : MonoBehaviour {
 
 	// Not sufficient, need to control things before instanciate
 	void OnTriggerEnter(Collider other) {
-		// kill powers, blocks, bombermans, bombs
+		// kill powers, blocks, bomberboys, bombs
 		Destroy(other.gameObject);
 		Destroy(gameObject);
 	}

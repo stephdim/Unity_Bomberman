@@ -8,7 +8,7 @@ public class PushUp : Bonus {
 	}
 	
 	protected override void AddBonus(Player p) {
-		// p.CanPushBomb();
+		p.CanPushBomb();
 	}
 
 }
