@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Menu : MonoBehaviour {
 
-	private bool play;
+	public bool play{ get; private set; }
 
 	void Start() {
 		play = false;

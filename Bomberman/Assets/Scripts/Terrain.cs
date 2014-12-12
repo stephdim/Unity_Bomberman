@@ -6,11 +6,9 @@ public class Terrain : MonoBehaviour {
 
 	List<string> list_bonus;
 	bool paused;
-	bool gameOver;
 
 	void Start() {
 		list_bonus = (List<string>) ReflectiveEnumerator.GetEnumerableOfType<Bonus>();
-		gameOver = false;
 
 		Play();
 		Init();
@@ -83,13 +81,18 @@ public class Terrain : MonoBehaviour {
 	}
 
 	bool IsOver() {
-		return false; // Player.players.Count < 2
+		return  Player.players.Count < 2;
+	}
+
+	bool IsReady(){
+		Menu menu = GameObject.FindObjectOfType<Menu> ();
+		return menu.play;
 	}
 
 	void OnGUI() {
 
 		// Menu pause
-		if (paused && !gameOver) {
+		if (paused && IsReady()) {
 
 			GUI.Box(
 				new Rect(
@@ -142,10 +145,9 @@ public class Terrain : MonoBehaviour {
 		}
 
 		// Menu Game Over
-		if (gameOver || IsOver()) {
-			if (!gameOver) {
-				Time.timeScale = 0;
-				gameOver = true;
+		if (IsReady () && IsOver()) {
+			if (IsOver()) {
+				Time.timeScale = 0.0f;
 			}
 
 			GUI.Box(
@@ -167,7 +169,7 @@ public class Terrain : MonoBehaviour {
 					),
 					"Nouvelle Partie"
 				)) {
-				Application.LoadLevel("BombermanV2");
+				Application.LoadLevel("Bomberman");
 			}
 
 			if (GUI.Button(

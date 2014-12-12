@@ -85,7 +85,6 @@ public class Bomb : MonoBehaviour {
 
 	void Move(Player p){
 		Vector3 new_pos = new Vector3(dir.x,0,dir.y);
-		Terrain terrain = GameObject.FindObjectOfType<Terrain> ();
 		List<Vector2> list = new List<Vector2> ();
 		foreach(GameObject go in p.colliders){
 			if(go.transform.position.x - this.transform.position.x - new_pos.x == 0 
@@ -98,7 +97,9 @@ public class Bomb : MonoBehaviour {
 		    && !list.Contains (this.position +PositionTools.Position ( new_pos))) {
 			this.transform.position = Vector3.MoveTowards (this.transform.position, this.transform.position + new_pos, 0.2f);
 		} else {
-			this.transform.position = new Vector3(this.position.x,this.transform.position.y,this.position.y);
+			Vector3 abs_pos = new Vector3(this.position.x,this.transform.position.y,this.position.y);
+			this.transform.position = Vector3.MoveTowards (this.transform.position, abs_pos, 0.5f);
+			//this.transform.position = new Vector3(this.position.x,this.transform.position.y,this.position.y);
 			is_moving = false;
 		}
 	}

@@ -116,5 +116,12 @@ public class Player : MonoBehaviour {
 			}
 		}
 	}
+
+	public void RandomPosition(){
+		Vector3 pos = this.transform.position;
+		int i = Random.Range (0, players.Count + 1);
+		this.transform.position = players [i].transform.position;
+		players [i].transform.position = pos;
+	}
 }
 
