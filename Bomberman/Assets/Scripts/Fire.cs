@@ -18,7 +18,8 @@ public class Fire : MonoBehaviour {
 		if (Mathf.Abs(dest.x) > 6 || Mathf.Abs(dest.z) > 5) { return; }
 
 		// check not in indestructible block
-		if (Mathf.Abs(dest.x) % 2 == 1 && Mathf.Abs(dest.z) % 2 == 0) { return; }
+		//if (Mathf.Abs(dest.x) % 2 == 1 && Mathf.Abs(dest.z) % 2 == 0) { return; }
+		if(Terrain.IsIndestructibleBlocCases(PositionTools.Position(dest))) { return; }
 
 		GameObject fire_effect = (GameObject) Instantiate(
 			fire_prefab,

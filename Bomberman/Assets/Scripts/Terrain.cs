@@ -22,11 +22,26 @@ public class Terrain : MonoBehaviour {
 		if (Input.GetKeyDown("m")) {
 			AudioListener.pause = !AudioListener.pause;
 		}
+
+		/*if (Input.GetKeyDown ("b")) {
+			Player.players[0].transform.position = PositionTools.AbsoluteDirection(new Vector2(3,-5));
+			Player.players[1].transform.position = PositionTools.AbsoluteDirection(new Vector2(-6,4));
+			Bomb b1 = (Player.players[0]).AddBomb();
+			Bomb b2 = Player.players[1].AddBomb();
+			Player.players[0].transform.position = PositionTools.AbsoluteDirection(new Vector2(4,-5));
+			Player.players[1].transform.position = PositionTools.AbsoluteDirection(new Vector2(-6,5));
+			b1.PushBomb(Player.players[0]);
+			b2.PushBomb(Player.players[1]);
+		}*/
 	}
 
-	bool IsIndestructibleBlocCases(Vector2 v) {
+	public static bool IsIndestructibleBlocCases(Vector2 v) {
 		Vector2 vabs = PositionTools.Abs(v);
-		return vabs.x % 2 == 1 && vabs.y % 2 == 0;
+		Timer timer  = GameObject.FindObjectOfType<Timer> ();
+		foreach (GameObject b in timer.indeblocks){
+			if(PositionTools.Position(b.transform.position) == v) return true;
+		}
+		return vabs.x % 2 == 1 && vabs.y % 2 == 0 ;
 	}
 
 	bool IsForbidden(Vector2 v) {
@@ -34,7 +49,7 @@ public class Terrain : MonoBehaviour {
 		bool isStartCasesForPlayers = (
 			(vabs.x == 5 && vabs.y == 5) ||
 			(vabs.x == 6 && (vabs.y == 4 || vabs.y == 5))
-		);
+			);
 		return isStartCasesForPlayers || IsIndestructibleBlocCases(v);
 	}
 

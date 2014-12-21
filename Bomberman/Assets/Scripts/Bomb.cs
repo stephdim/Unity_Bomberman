@@ -106,6 +106,7 @@ public class Bomb : MonoBehaviour {
 
 	void Update(){
 		if (is_moving) {
+
 			this.Move (player);
 		}
 	}
