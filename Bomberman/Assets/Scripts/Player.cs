@@ -112,7 +112,7 @@ public class Player : MonoBehaviour {
 	}
 
 	void PushBomb(Vector2 dir){
-		//if (can_push) {
+		if (can_push) {
 			foreach (GameObject obj in colliders) {
 				Bomb bomb = obj.GetComponent<Bomb> ();
 				if (bomb != null) {
@@ -122,7 +122,7 @@ public class Player : MonoBehaviour {
 					}
 				}
 			}
-		//}
+		}
 	}
 
 	public void RandomPosition(){

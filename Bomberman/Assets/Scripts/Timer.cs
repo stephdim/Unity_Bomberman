@@ -4,45 +4,46 @@ using System.Collections.Generic;
 
 public class Timer : MonoBehaviour {
 
-	float timer = 1;
+	float timer = 30;
 	Vector3 pos = new Vector3(-6,3,5);
+	string dir = "S";
 	public List<GameObject> indeblocks = new List<GameObject>();
 	List<GameObject> dead_obj = new List<GameObject>();
 
 	void Update () {
 		if (IsReady () && Player.players.Count > 1) {
-			Vector3 actual_pos;
+			Vector3 current_pos;
 			Vector3 final_pos;
 			if (indeblocks.Count != 0) {
 				final_pos = indeblocks [indeblocks.Count - 1].transform.position;
-				actual_pos = final_pos;
+				current_pos = final_pos;
 			} else {
 				final_pos = pos;
-				actual_pos = pos;
+				current_pos = pos;
 			}
 			final_pos.y = 0.25f;
 			if (timer > 0) {
 				timer -= Time.deltaTime;
-			} else if (indeblocks.Count == 0 || (indeblocks.Count < 160 && actual_pos.y == 0.25f)) {
+			} else if (indeblocks.Count == 0 || (indeblocks.Count < 108 && current_pos.y == 0.25f)) {
 				foreach(Player p in Player.players){
 					//tue le joueur s'il est en dessous du bloc dès que le bloc apparait.
-					if(p.position == PositionTools.Position(actual_pos)){ 
+					if(p.position == PositionTools.Position(current_pos)){ 
 						dead_obj.Add(p.gameObject);
 					}
 				}
 				foreach(GameObject go in Player.players[0].colliders){
-					if(go.transform.position == actual_pos && !indeblocks.Contains(go)){
+					if(go.transform.position == current_pos && !indeblocks.Contains(go)){
 						dead_obj.Add(go);
 					}
 				}
 				foreach(GameObject go in dead_obj){
 					Player.RemoveCollisions(go);
-					Destroy(go.gameObject);
+					//Destroy(go.gameObject);
 				}
 				dead_obj.Clear();
 				ThrowBlock ();
-			} else if (actual_pos.y != 0.25f) {
-				indeblocks [indeblocks.Count - 1].transform.position = Vector3.MoveTowards (actual_pos, final_pos, 0.2f);
+			} else if (current_pos.y != 0.25f) {
+				indeblocks [indeblocks.Count - 1].transform.position = Vector3.MoveTowards (current_pos, final_pos, 0.2f);
 			}
 		}
 	}
@@ -67,8 +68,25 @@ public class Timer : MonoBehaviour {
 		GameObject block = Put (pos);
 		indeblocks.Add(block);
 		Player.AddCollisions (block);
-
-		if(pos.x == -6 && pos.z > -5){
+		foreach (GameObject go in indeblocks) {
+			if( (PositionTools.Position(go.transform.position) == new Vector2(block.transform.position.x,block.transform.position.z +1f) && dir == "N") || (pos.z == 5 && pos.x == 6)){
+				dir = "W";
+				break;
+			}
+			if( (PositionTools.Position(go.transform.position) == new Vector2(block.transform.position.x,block.transform.position.z -1f) && dir == "S") || (pos.z == -5 && pos.x == -6)){
+				dir = "E";
+				break;
+			}
+			if( (PositionTools.Position(go.transform.position) == new Vector2(block.transform.position.x +1f,block.transform.position.z) && dir == "E") || (pos.z == -5 && pos.x == 6)){
+				dir = "N";
+				break;
+			}
+			if( (PositionTools.Position(go.transform.position) == new Vector2(block.transform.position.x - 1f,block.transform.position.z) && dir == "W") || (pos.z == 5 && pos.x == -6)){ 
+				dir = "S";
+				break;
+			}
+		}
+		/*if(pos.x == -6 && pos.z > -5){
 			pos.z -= 1f;
 		} else if(pos.z == -5 && pos.x < 6) {
 			pos.x += 1f;
@@ -77,7 +95,16 @@ public class Timer : MonoBehaviour {
 		} else if(pos.z == 5 && pos.x > -5) {
 			pos.x -= 1f;
 		}
-
+*/
+		if(dir == "S"){
+			pos.z -= 1f;
+		} else if(dir == "N") {
+			pos.z += 1f;
+		} else if(dir == "E") {
+			pos.x += 1f;
+		} else if(dir == "W") {
+			pos.x -= 1f;
+		}
 	}
 
 	void OnGUI(){
