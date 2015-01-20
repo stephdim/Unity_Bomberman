@@ -11,6 +11,7 @@ public class Player : MonoBehaviour {
 	public float speed { get; set; }
 	public int power { get; set; }
 	public int nb_bombs { get; set; }
+	public bool can_push { get; set; }
 	public List<GameObject> colliders { get; private set; }
 	public Vector2 position {
 		get {
@@ -22,7 +23,12 @@ public class Player : MonoBehaviour {
 	}
 
 	public static GameObject Put(Vector3 v) {
-		GameObject player_prefab = (GameObject) Resources.Load("Player");
+		GameObject player_prefab;
+		if (players.Count > 0) {
+			player_prefab = (GameObject)Resources.Load ("Player1");
+		} else {
+			player_prefab = (GameObject)Resources.Load ("Player");
+		}
 		GameObject player_clone = (GameObject) Instantiate(
 			player_prefab,
 			v,
@@ -37,16 +43,19 @@ public class Player : MonoBehaviour {
 	void register() {
 		id = players.Count;
 		players.Add(this);
-		SendMessage("SetInputPlayer", this); // for InputPlayer
+
 	}
 
 	void unregister() {
 		players.Remove(this);
 	}
 
-	void Start() {
+	void Awake() {
 		register();
+	}
 
+	void Start() {
+		SendMessage("SetInputPlayer", this); // for InputPlayer
 		speed = .1f;
 		power = 0;
 		nb_bombs = 1;
@@ -66,11 +75,15 @@ public class Player : MonoBehaviour {
 		return bombs_index_current < nb_bombs;
 	}
 
+	public void CanPushBomb() {
+		can_push = true;
+	}
+
 	void AddBomb() {
 		List<GameObject> bombs = new List<GameObject>(GameObject.FindGameObjectsWithTag("Bomb"));
 		if (CanPutBomb() && !bombs.Exists(go => position == new Vector2(go.transform.position.x, go.transform.position.z))) {
 			bombs_index_current++;
-			Bomb.Put(this);
+		 	Bomb.Put(this);
 		}
 	}
 
@@ -98,5 +111,25 @@ public class Player : MonoBehaviour {
 		players.ForEach(p => p.RemoveCollisionWith(gameObject));
 	}
 
+	void PushBomb(Vector2 dir){
+		if (can_push) {
+			foreach (GameObject obj in colliders) {
+				Bomb bomb = obj.GetComponent<Bomb> ();
+				if (bomb != null) {
+					if (bomb.position == this.position + dir) {
+						bomb.PushBomb (this);
+						return;
+					}
+				}
+			}
+		}
+	}
+
+	public void RandomPosition(){
+		Vector3 pos = this.transform.position;
+		int i = Random.Range (0, players.Count);
+		this.transform.position = players [i].transform.position;
+		players [i].transform.position = pos;
+	}
 }
 

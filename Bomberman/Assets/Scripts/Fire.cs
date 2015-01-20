@@ -18,7 +18,8 @@ public class Fire : MonoBehaviour {
 		if (Mathf.Abs(dest.x) > 6 || Mathf.Abs(dest.z) > 5) { return; }
 
 		// check not in indestructible block
-		if (Mathf.Abs(dest.x) % 2 == 1 && Mathf.Abs(dest.z) % 2 == 0) { return; }
+		//if (Mathf.Abs(dest.x) % 2 == 1 && Mathf.Abs(dest.z) % 2 == 0) { return; }
+		if(Terrain.IsIndestructibleBlocCases(PositionTools.Position(dest))) { return; }
 
 		GameObject fire_effect = (GameObject) Instantiate(
 			fire_prefab,
@@ -32,7 +33,7 @@ public class Fire : MonoBehaviour {
 		this.dir = dir;
 		this.life = life;
 
-		Invoke("SpreadFire", 0);
+		Invoke("SpreadFire", 0.0001f);
 	}
 
 	void SpreadFire() {
@@ -81,7 +82,7 @@ public class Fire : MonoBehaviour {
 
 	// Not sufficient, need to control things before instanciate
 	void OnTriggerEnter(Collider other) {
-		// kill powers, blocks, bombermans, bombs
+		// kill powers, blocks, bomberboys, bombs
 		Destroy(other.gameObject);
 		Destroy(gameObject);
 	}

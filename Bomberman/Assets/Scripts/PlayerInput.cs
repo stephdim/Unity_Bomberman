@@ -8,6 +8,7 @@ public class PlayerInput : MonoBehaviour {
 	string input_horizontal;
 	string input_vertical;
 	string input_fire;
+	string input_push;
 
 	Player player;
 
@@ -21,7 +22,7 @@ public class PlayerInput : MonoBehaviour {
 		input_horizontal = "Horizontal" + p.id;
 		input_vertical = "Vertical" + p.id;
 		input_fire = "Fire" + p.id;
-
+		input_push = "Push" + p.id;
 		player = p;
 
 		input_setted = true;
@@ -70,7 +71,6 @@ public class PlayerInput : MonoBehaviour {
 
 			return false;
 		}
-		
 		// no collisions
 		// @todo : optimize
 		foreach (GameObject go in player.colliders) {
@@ -134,6 +134,14 @@ public class PlayerInput : MonoBehaviour {
 
 		// Put bomb
 		if (Input.GetButton(input_fire)) { SendMessage("AddBomb"); }
+		// Push bomb
+		if (Input.GetButton (input_push)) { 
+			if(v != 0){
+				SendMessage ("PushBomb", vv); 
+			} else if(h != 0) {
+				SendMessage ("PushBomb", vh); 
+			}
+		}
 	}
 
 }
