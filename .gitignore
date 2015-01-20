@@ -62,6 +62,8 @@ $RECYCLE.BIN/
 *.msi
 *.msm
 *.msp
+
 Bomberman/Bomberman.userprefs
 Bomberman/Bomberman.sln
 Bomberman/Bomberman-csharp.sln
+Bomberman/ProjectSettings/GraphicsSettings.asset
