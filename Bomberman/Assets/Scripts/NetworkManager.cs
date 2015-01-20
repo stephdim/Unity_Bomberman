@@ -6,6 +6,7 @@ using System.Collections;
 
 public class NetworkManager : MonoBehaviour {
 
+	public static bool enable = false;
 	public GameObject playerPrefab;
 
 	const string typeName = "StephdimUnityBomberman";

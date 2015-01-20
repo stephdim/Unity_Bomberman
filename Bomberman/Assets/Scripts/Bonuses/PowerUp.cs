@@ -2,12 +2,15 @@ using UnityEngine;
 using System.Collections;
 
 public class PowerUp : Bonus {
+
 	void Start() {
-		this.GetComponent<TextMesh>().text = "Power +";
+		GetComponent<MeshRenderer>().material.color = Color.yellow;
 	}
 
 	protected override void AddBonus(Player p) {
-		p.IncreasePower();
+		SoundManager.Launch("Pouvoir+");
+		p.power++;
 	}
+
 }
 
