@@ -7,7 +7,7 @@ using System.Collections;
 public class NetworkManager : MonoBehaviour {
 
 	public static bool enable = false;
-	public GameObject playerPrefab;
+	GameObject playerPrefab;
 
 	const string typeName = "StephdimUnityBomberman";
 	string gameName = "Test";
@@ -16,6 +16,10 @@ public class NetworkManager : MonoBehaviour {
 
 	int playerCount = 0; // OnPlayerConnected
 	string passwordToEdit = "";
+
+	void Start() {
+		playerPrefab = (GameObject) Resources.Load("Player");
+	}
 
 	void OnGUI() {
 		if (!Network.isClient && !Network.isServer) {
@@ -39,6 +43,7 @@ public class NetworkManager : MonoBehaviour {
 			passwordToEdit = GUI.PasswordField(new Rect(10, 35, 200, 20), passwordToEdit, '*', 25);
 		}
 	}
+
 	void OnMasterServerEvent(MasterServerEvent msEvent) {
 		if (msEvent == MasterServerEvent.HostListReceived) {
 			hostList = MasterServer.PollHostList();
