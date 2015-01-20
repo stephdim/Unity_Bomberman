@@ -62,8 +62,11 @@ $RECYCLE.BIN/
 *.msi
 *.msm
 *.msp
+
 Bomberman/Bomberman.userprefs
 Bomberman/Bomberman.sln
 Bomberman/Bomberman-csharp.sln
-Bomberman/Assets/Sons/Resources/Vitesse+(old).wav.meta
-Bomberman/Assets/Sons/Resources/Pouvoir+(old).wav.meta
+
+Bomberman/ProjectSettings/InputManager.asset
+Bomberman/ProjectSettings/GraphicsSettings.asset
+
