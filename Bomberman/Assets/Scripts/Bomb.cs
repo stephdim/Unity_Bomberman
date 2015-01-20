@@ -36,14 +36,8 @@ public class Bomb : MonoBehaviour {
 	}
 
 	void Start() {
-<<<<<<< HEAD
-=======
 		is_exploded = false;
-<<<<<<< HEAD
->>>>>>> v2
-=======
 		is_moving = false;
->>>>>>> Timer
 		Invoke("Boom", 2);
 	}
 
@@ -53,10 +47,6 @@ public class Bomb : MonoBehaviour {
 	}
 
 	public void Boom() {
-<<<<<<< HEAD
-		Camera.main.GetComponent<CameraAudio> ().BoomSound ();
-		Terrain.instance.ExplodeBomb(this);
-=======
 		CancelInvoke();
 		is_exploded = true;
 		SoundManager.Launch("Boom");
@@ -70,7 +60,6 @@ public class Bomb : MonoBehaviour {
 
 		player.BombHaveExplode();
 		Destroy(gameObject);
->>>>>>> v2
 	}
 
 	void OnDestroy() {
