@@ -164,7 +164,8 @@ public class Terrain : MonoBehaviour {
 			if (IsOver()) {
 				Time.timeScale = 0.0f;
 			}
-
+			string winner = "Bande de mauvais !!";
+			if(Player.players.Count > 0) winner = "Victoire : Joueur "+ (Player.players[0].id +1);
 			GUI.Box(
 				new Rect(
 					0.4f * Screen.width,
@@ -172,7 +173,7 @@ public class Terrain : MonoBehaviour {
 					0.2f * Screen.width,
 					0.3f * Screen.height
 				),
-				"Game Over"
+				"Game Over :\n"+winner
 			);
 
 			if (GUI.Button(
