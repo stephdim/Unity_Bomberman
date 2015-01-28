@@ -4,14 +4,18 @@ using System.Collections.Generic;
 
 public class Terrain : MonoBehaviour {
 
+	Menu menu;
 	List<string> list_bonus;
 	bool paused;
 
 	void Start() {
 		list_bonus = (List<string>) ReflectiveEnumerator.GetEnumerableOfType<Bonus>();
+		Menu menu = GameObject.FindObjectOfType<Menu>();
 
-		Play();
-		Init();
+		// Play();
+		if (!menu.network || menu.server) {
+			Init();
+		}
 	}
 
 	void Update() {
@@ -22,17 +26,6 @@ public class Terrain : MonoBehaviour {
 		if (Input.GetKeyDown("m")) {
 			AudioListener.pause = !AudioListener.pause;
 		}
-
-		/*if (Input.GetKeyDown ("b")) {
-			Player.players[0].transform.position = PositionTools.AbsoluteDirection(new Vector2(3,-5));
-			Player.players[1].transform.position = PositionTools.AbsoluteDirection(new Vector2(-6,4));
-			Bomb b1 = (Player.players[0]).AddBomb();
-			Bomb b2 = Player.players[1].AddBomb();
-			Player.players[0].transform.position = PositionTools.AbsoluteDirection(new Vector2(4,-5));
-			Player.players[1].transform.position = PositionTools.AbsoluteDirection(new Vector2(-6,5));
-			b1.PushBomb(Player.players[0]);
-			b2.PushBomb(Player.players[1]);
-		}*/
 	}
 
 	public static bool IsIndestructibleBlocCases(Vector2 v) {
@@ -53,7 +46,7 @@ public class Terrain : MonoBehaviour {
 		return isStartCasesForPlayers || IsIndestructibleBlocCases(v);
 	}
 
-	void Init() {
+	public void Init() {
 
 		// stock all available cases
 		// select random cases
@@ -85,7 +78,7 @@ public class Terrain : MonoBehaviour {
 		}
 	}
 
-	void Play() {
+	public void Play() {
 		paused = false;
 		Time.timeScale = 1;
 	}

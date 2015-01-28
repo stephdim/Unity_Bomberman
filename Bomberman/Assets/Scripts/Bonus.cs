@@ -3,6 +3,7 @@ using System.Collections;
 
 public class Bonus : MonoBehaviour {
 
+	public string type { get; private set; }
 	public Vector2 position {
 		get {
 			return new Vector2(
@@ -21,6 +22,7 @@ public class Bonus : MonoBehaviour {
 			Quaternion.identity
 		);
 		bonus.AddComponent(type);
+		bonus.GetComponent<Bonus>().type = type;
 
 		return bonus;
 	}

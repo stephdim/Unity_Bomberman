@@ -14,7 +14,7 @@ public class PlayerInput : MonoBehaviour {
 
 	bool input_setted;
 
-	void Start() {
+	void Awake() {
 		input_setted = false;
 	}
 

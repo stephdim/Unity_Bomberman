@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class Timer : MonoBehaviour {
 
-	float timer = 30;
+	float timer = 600;
 	Vector3 pos = new Vector3(-6,3,5);
 	string dir = "S";
 	public List<GameObject> indeblocks = new List<GameObject>();
@@ -50,7 +50,7 @@ public class Timer : MonoBehaviour {
 
 	bool IsReady(){
 		Menu menu = GameObject.FindObjectOfType<Menu> ();
-		return menu.play;
+		return false;//menu.play;
 	}
 
 	public static GameObject Put(Vector3 pos) {

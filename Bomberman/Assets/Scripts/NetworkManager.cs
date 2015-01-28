@@ -1,27 +1,56 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 [RequireComponent (typeof (NetworkView))]
 
 public class NetworkManager : MonoBehaviour {
 
 	public static bool enable = false;
+	Menu menu;
 	GameObject playerPrefab;
 
 	const string typeName = "StephdimUnityBomberman";
-	string gameName = "Test";
+	// string gameName = "Test";
 
-	HostData[] hostList;
+	public HostData[] hostList { get; private set; }
 
 	int playerCount = 0; // OnPlayerConnected
-	string passwordToEdit = "";
+	// string passwordToEdit = "";
 
 	void Start() {
+		DontDestroyOnLoad(gameObject);
+		menu = GameObject.FindObjectOfType<Menu>();
 		playerPrefab = (GameObject) Resources.Load("Player");
 	}
 
+	Rect SRect(float x, float y, float w, float h, float sw, float sh) {
+		return new Rect(x * sw, y * sh, w * sw, h * sh);
+	}
+
 	void OnGUI() {
+		if (!menu.network || menu.play) return;
+
+		GUILayout.BeginArea(
+			new Rect(0, 0, Screen.width, Screen.height),
+			menu.layout_style
+		);
+		GUILayout.FlexibleSpace(); GUILayout.BeginHorizontal(); GUILayout.FlexibleSpace();
+
+		if (Network.isServer && playerCount >= 1) {
+			if (GUILayout.Button("Launch", menu.button_style)) {
+				// Launch and close new connection of others players
+				networkView.RPC("Play", RPCMode.All);
+			}
+		} else {
+			GUILayout.Label("Wait...", menu.button_style);
+		}
+
+		GUILayout.FlexibleSpace(); GUILayout.EndHorizontal(); GUILayout.FlexibleSpace();
+		GUILayout.EndArea();
+
+/*
 		if (!Network.isClient && !Network.isServer) {
 			if (GUI.Button(new Rect(100, 100, 250, 100), "Start Server")) {
 				StartServer();
@@ -42,6 +71,14 @@ public class NetworkManager : MonoBehaviour {
 			gameName = GUI.TextField(new Rect(10, 10, 200, 20), gameName, 25);
 			passwordToEdit = GUI.PasswordField(new Rect(10, 35, 200, 20), passwordToEdit, '*', 25);
 		}
+*/
+	}
+
+	[RPC]
+	void Play() {
+		menu.play = true;
+		enable = true;
+		GameObject.FindObjectOfType<Terrain>().Play();
 	}
 
 	void OnMasterServerEvent(MasterServerEvent msEvent) {
@@ -79,6 +116,14 @@ public class NetworkManager : MonoBehaviour {
 	void OnPlayerConnected(NetworkPlayer player) {
 		Debug.Log("Player " + playerCount++ + " connected from " + player.ipAddress + ":" + player.port);
 		networkView.RPC("SpawnPlayer", player, Network.connections.Length + 1);
+
+		Vector3[] blocks = Array.ConvertAll(GameObject.FindGameObjectsWithTag("Block"), e => e.transform.position);
+
+		Bonus[] tmp = Array.ConvertAll(GameObject.FindGameObjectsWithTag("Bonus"), e => e.GetComponent<Bonus>());
+		Vector3[] bonus_pos = Array.ConvertAll(tmp, e => e.gameObject.transform.position);
+		string[] bonus_typ = Array.ConvertAll(tmp, e => e.type);
+
+		InitTerrain(player, blocks, bonus_pos, bonus_typ);
 	}
 	void OnPlayerDisconnected(NetworkPlayer player) {
 		Debug.Log("Clean up after player " + player);
@@ -86,16 +131,16 @@ public class NetworkManager : MonoBehaviour {
 		Network.DestroyPlayerObjects(player);
 	}
 
-	private void StartServer() {
+	public void StartServer(string gameName) {
 		Network.InitializeServer(4, 25000, !Network.HavePublicAddress());
 		MasterServer.RegisterHost(typeName, gameName);
 	}
 
-	private void JoinServer(HostData hostData) {
+	public void JoinServer(HostData hostData) {
 		Network.Connect(hostData);
 	}
 
-	private void RefreshHostList() {
+	public void RefreshHostList() {
 		MasterServer.RequestHostList(typeName);
 	}
 
@@ -112,8 +157,34 @@ public class NetworkManager : MonoBehaviour {
 		throw new ArgumentException("id must be between [1;4]", "id");
 	}
 
+	private void InitTerrain(NetworkPlayer player, Vector3[] blocks, Vector3[] bonus_pos, string[] bonus_typ) {
+		foreach(Vector3 v in blocks) {
+			networkView.RPC(
+				"PutBlock",
+				player,
+				v
+			);
+		}
+
+		for(int i = 0; i < bonus_pos.Length ; i++) {
+			networkView.RPC(
+				"PutBonus",
+				player,
+				bonus_pos[i],
+				bonus_typ[i]
+			);
+		}
+	}
+
 	[RPC]
-	private void initTerrain() {}
+	void PutBlock(Vector3 v) {
+		Block.Put(v);
+	}
+
+	[RPC]
+	void PutBonus(Vector3 v, string t) {
+		Bonus.Put(v, t);
+	}
 
 	[RPC]
 	private void SpawnPlayer(int id) {

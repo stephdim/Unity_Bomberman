@@ -83,7 +83,7 @@ public class Player : MonoBehaviour {
 		List<GameObject> bombs = new List<GameObject>(GameObject.FindGameObjectsWithTag("Bomb"));
 		if (CanPutBomb() && !bombs.Exists(go => position == new Vector2(go.transform.position.x, go.transform.position.z))) {
 			bombs_index_current++;
-		 	Bomb.Put(this);
+			Bomb.Put(this);
 		}
 	}
 
