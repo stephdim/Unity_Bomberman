@@ -13,6 +13,8 @@ public class Terrain : MonoBehaviour {
 		Menu menu = GameObject.FindObjectOfType<Menu>();
 
 		// Play();
+		paused = true;
+		Time.timeScale = 0;
 		if (!menu.network || menu.server) {
 			Init();
 		}
