@@ -82,15 +82,18 @@ public class Player : MonoBehaviour {
 	}
 
 	void AddBomb() {
-		if (NetworkManager.enable) {
-			networkView.RPC(
-				"AddBombNetwork",
-				RPCMode.All,
-				id,
-				transform.position
-			);
-		} else {
-			AddBombAux(transform.position);
+		List<GameObject> bombs = new List<GameObject>(GameObject.FindGameObjectsWithTag("Bomb"));
+		if (CanPutBomb() && !bombs.Exists(go => position == new Vector2(go.transform.position.x, go.transform.position.z))) {
+			if (NetworkManager.enable) {
+				networkView.RPC(
+					"AddBombNetwork",
+					RPCMode.All,
+					id,
+					transform.position
+				);
+			} else {
+				AddBombAux(transform.position);
+			}
 		}
 	}
 
@@ -106,11 +109,8 @@ public class Player : MonoBehaviour {
 	}
 
 	void AddBombAux(Vector3 pos) {
-		List<GameObject> bombs = new List<GameObject>(GameObject.FindGameObjectsWithTag("Bomb"));
-		if (CanPutBomb() && !bombs.Exists(go => position == new Vector2(go.transform.position.x, go.transform.position.z))) {
-			bombs_index_current++;
-			Bomb.Put(this, pos);
-		}
+		bombs_index_current++;
+		Bomb.Put(this, pos);
 	}
 
 	public void BombHaveExplode() {
