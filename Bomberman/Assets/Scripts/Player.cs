@@ -99,7 +99,6 @@ public class Player : MonoBehaviour {
 
 	[RPC]
 	void AddBombNetwork(int id, Vector3 pos) {
-		Debug.Log(id);
 		foreach(Player p in players) {
 			if (p.id == id) {
 				p.AddBombAux(pos);
@@ -156,12 +155,6 @@ public class Player : MonoBehaviour {
 		int i = Random.Range (0, players.Count);
 		this.transform.position = players [i].transform.position;
 		players [i].transform.position = pos;
-	}
-
-	void onGUI() {
-		if (networkView.isMine) {
-			GUILayout.Label(""+id);
-		}
 	}
 }
 
