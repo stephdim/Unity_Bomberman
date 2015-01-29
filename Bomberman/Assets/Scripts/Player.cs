@@ -86,28 +86,29 @@ public class Player : MonoBehaviour {
 			networkView.RPC(
 				"AddBombNetwork",
 				RPCMode.All,
-				id
+				id,
+				transform.position
 			);
 		} else {
-			AddBombAux();
+			AddBombAux(transform.position);
 		}
 	}
 
 	[RPC]
-	void AddBombNetwork(int id) {
+	void AddBombNetwork(int id, Vector3 pos) {
 		foreach(Player p in players) {
 			if (p.id == id) {
-				p.AddBombAux();
+				p.AddBombAux(pos);
 				break;
 			}
 		}
 	}
 
-	void AddBombAux() {
+	void AddBombAux(Vector3 pos) {
 		List<GameObject> bombs = new List<GameObject>(GameObject.FindGameObjectsWithTag("Bomb"));
 		if (CanPutBomb() && !bombs.Exists(go => position == new Vector2(go.transform.position.x, go.transform.position.z))) {
 			bombs_index_current++;
-			Bomb.Put(this);
+			Bomb.Put(this, pos);
 		}
 	}
 

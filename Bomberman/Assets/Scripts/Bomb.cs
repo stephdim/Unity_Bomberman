@@ -18,10 +18,10 @@ public class Bomb : MonoBehaviour {
 	Vector2 dir;
 	bool is_moving;
 
-	public static GameObject Put(Player player) {
+	public static GameObject Put(Player player, Vector3 pos) {
 		GameObject bomb_prefab = (GameObject) Resources.Load("Bomb");
 
-		Vector3 pos = player.transform.position;
+		// Vector3 pos = player.transform.position;
 		pos.y = bomb_prefab.transform.position.y;
 
 		GameObject bomb_clone = (GameObject) Instantiate(
