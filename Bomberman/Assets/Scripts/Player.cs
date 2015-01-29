@@ -2,6 +2,8 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
+[RequireComponent (typeof (NetworkView))]
+
 public class Player : MonoBehaviour {
 
 	public static List<Player> players = new List<Player>();
@@ -80,6 +82,28 @@ public class Player : MonoBehaviour {
 	}
 
 	void AddBomb() {
+		if (NetworkManager.enable) {
+			networkView.RPC(
+				"AddBombNetwork",
+				RPCMode.All,
+				id
+			);
+		} else {
+			AddBombAux();
+		}
+	}
+
+	[RPC]
+	void AddBombNetwork(int id) {
+		foreach(Player p in players) {
+			if (p.id == id) {
+				p.AddBombAux();
+				break;
+			}
+		}
+	}
+
+	void AddBombAux() {
 		List<GameObject> bombs = new List<GameObject>(GameObject.FindGameObjectsWithTag("Bomb"));
 		if (CanPutBomb() && !bombs.Exists(go => position == new Vector2(go.transform.position.x, go.transform.position.z))) {
 			bombs_index_current++;
